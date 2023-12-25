@@ -8,8 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
@@ -29,25 +30,14 @@ class User extends Authenticatable
         'cccd_after',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class)->withTimestamps();
+    }
+    
     protected $hidden = [
         'password',
         'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'id' => 'uuid',
     ];
 
     protected static function boot()
@@ -55,7 +45,17 @@ class User extends Authenticatable
         parent::boot();
 
         static::creating(function ($model) {
-            $model->id = $model->id ?? Str::uuid();
+            $model->id = Str::uuid();
         });
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
