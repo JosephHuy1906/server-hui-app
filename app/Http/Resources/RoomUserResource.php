@@ -18,8 +18,8 @@ class RoomUserResource extends JsonResource
             'id' => $this->id,
             'room_id' => $this->room_id,
             'user_id' =>  $this->user_id,
-            'created_at' => $this->created_at->format('d/m/Y'),
-            'updated_at' => $this->updated_at->format('d/m/Y'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

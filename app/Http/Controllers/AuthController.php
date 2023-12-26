@@ -20,19 +20,26 @@ class AuthController extends Controller
 
     public function login()
     {
-        $credentials = request(['email', 'password']);
+        try {
 
-        if (!$token = Auth::attempt($credentials)) {
+            $credentials = request(['email', 'password']);
+            if (!$token = Auth::attempt($credentials)) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 401,
+                    'message' => 'Email or password incorrect'
+                ], 401);
+            }
+            $refreshToken = $this->createRefreshToken();
+            return $this->respondWithToken($token, $refreshToken);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'status' => 401,
-                'message' => 'Email or password incorrect'
-            ], 401);
+                'status' => 500,
+                'message' => 'Error server',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $refreshToken = $this->createRefreshToken();
-
-        return $this->respondWithToken($token, $refreshToken);
     }
     public function signup(Request $request)
     {
@@ -44,12 +51,9 @@ class AuthController extends Controller
                     'name' => 'required',
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|min:6',
-                    'cccd_after' => 'required|image|mimes:jpeg,png,jpg|max:4048',
-                    'cccd_before' => 'required|image|mimes:jpeg,png,jpg|max:4048',
                 ]
             );
             $response = new ResponseController();
-            $image = new ImageController();
             if ($validateUser->fails()) {
                 return $response->errorResponse("Validation error", $validateUser->errors(), 400);
             }
@@ -57,21 +61,14 @@ class AuthController extends Controller
             if ($email) {
                 return $response->errorResponse("Email is already exist", null, 404);
             }
-
-            $cccdAfterPath = $image->uploadImage($request->file('cccd_after'), 'images/users');
-            $cccdBeforePath = $image->uploadImage($request->file('cccd_before'), 'images/users');
-
-            $user = User::create([
+            User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'cccd_after' => $cccdAfterPath,
-                'cccd_before' => $cccdBeforePath,
             ]);
 
-            return $response->successResponse("User Created Successfully", new UserResource($user), 200);
+            return $response->successResponse("User Created Successfully", null, 201);
         } catch (\Throwable $th) {
-
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
@@ -79,30 +76,41 @@ class AuthController extends Controller
     public function profile()
     {
         try {
+            $data = auth('api')->user();
             return response()->json([
                 'success' => true,
                 'status' => 200,
                 'message' => 'get user successfuly',
-                'data' => auth('api')->user()
+                'data' => new UserResource($data)
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'status' => 500,
-                'message' => 'Token Unauthorized'
+                'message' => 'Token Unauthorized',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
 
     public function logout()
     {
-        auth()->logout();
+        try {
+            auth()->logout();
 
-        return response()->json([
-            'success' => true,
-            'status' => 200,
-            'message' => 'Successfully logged out'
-        ], 200);
+            return response()->json([
+                'success' => true,
+                'status' => 200,
+                'message' => 'Successfully logged out'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Token Unauthorized',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
     public function refresh()
     {
@@ -134,6 +142,8 @@ class AuthController extends Controller
     private function respondWithToken($token, $refreshToken)
     {
         return response()->json([
+            'status' => 200,
+            'success' => true,
             'message' => 'Login successfully',
             'access_token' => $token,
             'refresh_token' => $refreshToken,

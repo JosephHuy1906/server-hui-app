@@ -14,9 +14,21 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $role = [
-            ['name' => 'Admin'],
-            ['name' => 'Sub Admin'],
-            ['name' =>  'User'],
+            [
+                'name' => 'Admin',
+                'created_at' => '2023-12-25 12:35:25',
+                'updated_at' => '2023-12-25 12:35:25'
+            ],
+            [
+                'name' => 'Sub Admin',
+                'created_at' => '2023-12-25 12:35:25',
+                'updated_at' => '2023-12-25 12:35:25'
+            ],
+            [
+                'name' =>  'User',
+                'created_at' => '2023-12-25 12:35:25',
+                'updated_at' => '2023-12-25 12:35:25'
+            ],
         ];
         DB::table('role')->insert($role);
     }

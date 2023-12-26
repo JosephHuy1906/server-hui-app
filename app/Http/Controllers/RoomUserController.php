@@ -15,8 +15,8 @@ class RoomUserController extends Controller
 {
     public function addUserForRoom(Request $request)
     {
-        $response = new ResponseController();
         try {
+            $response = new ResponseController();
             $validator = Validator::make($request->all(), [
                 'room_id' => 'required',
                 'user_id' => 'required',
@@ -40,7 +40,6 @@ class RoomUserController extends Controller
             }
 
             if ($existingRecord) {
-
                 DB::table('room_user')
                     ->where('room_id', $request->room_id)
                     ->where('user_id', $request->user_id)

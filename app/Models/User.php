@@ -13,12 +13,10 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuids;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    public function roles()
+    {
+        return $this->belongsTo(Role::class, 'role');
+    }
     protected $fillable = [
         'name',
         'email',
@@ -34,7 +32,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Room::class)->withTimestamps();
     }
-    
+
     protected $hidden = [
         'password',
         'remember_token',

@@ -9,9 +9,10 @@ class Room extends Model
 {
     use HasFactory;
 
-    protected $fill = [
+    protected $fillable = [
         'title',
         'price_room',
+        'avatar',
         'commission_percentage',
         'date_start',
         'date_end',

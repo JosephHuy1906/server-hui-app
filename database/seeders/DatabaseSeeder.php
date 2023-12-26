@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             RoomSeeder::class,
-            RoomUserSeeder::class
+            RoomUserSeeder::class,
+            MessageSeeder::class
         ]);
     }
 }
