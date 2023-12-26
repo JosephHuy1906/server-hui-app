@@ -45,7 +45,7 @@ class AuthController extends Controller
     {
         try {
 
-            $validateUser = Validator::make(
+            $validate = Validator::make(
                 $request->all(),
                 [
                     'name' => 'required',
@@ -54,8 +54,19 @@ class AuthController extends Controller
                 ]
             );
             $response = new ResponseController();
-            if ($validateUser->fails()) {
-                return $response->errorResponse("Validation error", $validateUser->errors(), 400);
+            if ($validate->fails()) {
+                $errors = $validate->errors();
+
+                $errorMessages = [];
+                foreach ($errors->messages() as $field => $messages) {
+                    foreach ($messages as $message) {
+                        $errorMessages[] = [
+                            'field' => $field,
+                            'message' => $message,
+                        ];
+                    }
+                }
+                return $response->errorResponse($errorMessages, null, 400);
             }
             $email = User::find($request->email);
             if ($email) {
