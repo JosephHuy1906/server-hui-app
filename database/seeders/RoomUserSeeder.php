@@ -17,22 +17,22 @@ class RoomUserSeeder extends Seeder
             [
                 'room_id' => 1,
                 'user_id' => 'f2e4bf0c-f756-4b54-aaa2-28a0a7fbab94',
-                'joined_at' => 1
+
             ],
             [
                 'room_id' => 1,
                 'user_id' => 'f2e4bf0c-f756-4b54-aaa2-25460a7fbab7',
-                'joined_at' => 1
+
             ],
             [
                 'room_id' => 2,
                 'user_id' => 'f2e4bf0c-f756-4b54-aaa2-25460a7fbab7',
-                'joined_at' => 1
+
             ],
             [
                 'room_id' => 3,
                 'user_id' => 'f2e4bf0c-f756-4b54-aaa2-28a0a7fbab94',
-                'joined_at' => 1
+
             ],
         ];
 

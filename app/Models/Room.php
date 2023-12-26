@@ -16,4 +16,15 @@ class Room extends Model
         'date_start',
         'date_end',
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    public function userEvents()
+    {
+        return $this->hasMany(RoomUser::class);
+    }
+   
 }

@@ -1,0 +1,155 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
+class UserController extends Controller
+{
+    public function createUser(Request $request)
+    {
+        try {
+
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'name' => 'required',
+                    'email' => 'required|email|unique:users,email',
+                    'password' => 'required|min:6',
+
+                ]
+            );
+            $response = new ResponseController();
+            $image = new ImageController();
+            if ($validateUser->fails()) {
+                return $response->errorResponse("Validation error", $validateUser->errors(), 400);
+            }
+            $email = User::find($request->email);
+            if ($email) {
+                return $response->errorResponse("Email is already exist", null, 404);
+            }
+
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            return $response->successResponse("User Created Successfully", new UserResource($user), 200);
+        } catch (\Throwable $th) {
+
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+    public function updateCCCD(Request $request, $id)
+    {
+        $response = new ResponseController();
+        try {
+
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'cccd_after' => 'required|image|mimes:jpeg,png,jpg|max:4048',
+                    'cccd_before' => 'required|image|mimes:jpeg,png,jpg|max:4048',
+                ]
+            );
+
+            $image = new ImageController();
+            if ($validateUser->fails()) {
+                return $response->errorResponse("Validation error", $validateUser->errors(), 400);
+            }
+
+            $cccdAfterPath = $image->uploadImage($request->file('cccd_after'), 'images/users');
+            $cccdBeforePath = $image->uploadImage($request->file('cccd_before'), 'images/users');
+
+            $user = User::create([
+                'cccd_after' => $cccdAfterPath,
+                'cccd_before' => $cccdBeforePath,
+            ]);
+
+            return $response->successResponse("User Created Successfully", new UserResource($user), 201);
+        } catch (\Throwable $th) {
+
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $response = new ResponseController();
+        try {
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|min:6',
+                'confirm_password' => 'required|same:password',
+            ]);
+
+            if ($validator->fails()) {
+                return $response->errorResponse('Validation error', $validator->errors(), 400);
+            }
+
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return  $response->successResponse('Password updated successfully', null, 201);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $response = new ResponseController();
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required',
+            'phone' => 'sometimes|required',
+        ]);
+
+        if ($validator->fails()) {
+            return $response->errorResponse('Input error value', $validator->errors(), 400);
+        }
+
+        $data = $request->input();
+        $user->update($data);
+        return $response->successResponse('User update successfully', new UserResource($user), 201);
+    }
+
+    public function updateAvatar(Request $request, $id)
+    {
+        $response = new ResponseController();
+        try {
+            $validator = Validator::make($request->all(), [
+                'avatar' => 'required|image|mimes:png,jpg,jpeg,gif|max:2048',
+            ]);
+            if ($validator->fails()) {
+                return $response->errorResponse('Input error value', $validator->errors(), 400);
+            }
+            $user = User::find($id);
+            if (!$user) {
+                return $response->errorResponse('User not found', null, 404);
+            }
+            $oldAvatarPath = str_replace(url('/') . '/api/', '', $user->avatar);
+            $avatar = $request->file('avatar');
+            $storagePath = 'images/users';
+            $filename = time() . '_' . $avatar->getClientOriginalName();
+            $avatar->storeAs($storagePath, $filename, 'public');
+            if ($oldAvatarPath && Storage::disk('public')->exists($oldAvatarPath)) {
+                Storage::disk('public')->delete($oldAvatarPath);
+            }
+            $baseUrl = Config::get('app.url');
+            $user->update([
+                'avatar' => $baseUrl . '/api/' . $storagePath . '/' . $filename,
+            ]);
+            return $response->successResponse('User update avatar successfully', new UserResource($user), 201);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+}

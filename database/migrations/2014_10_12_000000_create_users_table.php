@@ -22,6 +22,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
+            $table->integer('user_count')->default(0);
             $table->foreign('role')->references('id')->on('role')->constrained()
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
