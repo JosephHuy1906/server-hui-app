@@ -16,17 +16,15 @@ class UserController extends Controller
     public function createUser(Request $request)
     {
         try {
-
+            $response = new ResponseController();
             $validateUser = Validator::make(
                 $request->all(),
                 [
                     'name' => 'required',
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|min:6',
-
                 ]
             );
-            $response = new ResponseController();
             $image = new ImageController();
             if ($validateUser->fails()) {
                 return $response->errorResponse("Validation error", $validateUser->errors(), 400);
@@ -36,7 +34,6 @@ class UserController extends Controller
                 return $response->errorResponse("Email is already exist", null, 404);
             }
 
-
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -45,15 +42,13 @@ class UserController extends Controller
 
             return $response->successResponse("User Created Successfully", new UserResource($user), 200);
         } catch (\Throwable $th) {
-
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
     public function updateCCCD(Request $request, $id)
     {
-        $response = new ResponseController();
         try {
-
+            $response = new ResponseController();
             $validateUser = Validator::make(
                 $request->all(),
                 [
@@ -77,15 +72,14 @@ class UserController extends Controller
 
             return $response->successResponse("User Created Successfully", new UserResource($user), 201);
         } catch (\Throwable $th) {
-
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
 
     public function updatePassword(Request $request, User $user)
     {
-        $response = new ResponseController();
         try {
+            $response = new ResponseController();
             $validator = Validator::make($request->all(), [
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|same:password',
@@ -106,25 +100,29 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $response = new ResponseController();
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required',
-            'phone' => 'sometimes|required',
-        ]);
+        try {
+            $response = new ResponseController();
+            $validator = Validator::make($request->all(), [
+                'name' => 'sometimes|required',
+                'phone' => 'sometimes|required',
+            ]);
 
-        if ($validator->fails()) {
-            return $response->errorResponse('Input error value', $validator->errors(), 400);
+            if ($validator->fails()) {
+                return $response->errorResponse('Input error value', $validator->errors(), 400);
+            }
+
+            $data = $request->input();
+            $user->update($data);
+            return $response->successResponse('User update successfully', new UserResource($user), 201);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
-
-        $data = $request->input();
-        $user->update($data);
-        return $response->successResponse('User update successfully', new UserResource($user), 201);
     }
 
     public function updateAvatar(Request $request, $id)
     {
-        $response = new ResponseController();
         try {
+            $response = new ResponseController();
             $validator = Validator::make($request->all(), [
                 'avatar' => 'required|image|mimes:png,jpg,jpeg,gif|max:2048',
             ]);

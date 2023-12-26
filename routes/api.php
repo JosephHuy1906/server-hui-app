@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomUserController;
 use App\Http\Controllers\UserController;
@@ -32,6 +33,9 @@ Route::group([
     Route::put('/update-password/{user}', [UserController::class, 'updatePassword']);
     Route::post('/update-avatar/{id}', [UserController::class, 'updateAvatar']);
 });
-Route::get('rooms', [RoomController::class, 'getAllRoomsWithUsers']);
-Route::post('room/add', [RoomUserController::class, 'addUserForRoom']);
-Route::get('room/{userId}', [RoomController::class, 'getRoomsByUserId']);
+Route::get('room/user/{userId}/{item}', [RoomController::class, 'getRoomsByUserId']);
+Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);
+Route::post('room/actionroom', [RoomUserController::class, 'addUserForRoom']);
+Route::post('room/addroom', [RoomController::class, 'addroom']);
+Route::post('message/postMess', [RoomController::class, 'postMessage']);
+Route::get('message/room/{id}', [MessageController::class, 'getMessage']);

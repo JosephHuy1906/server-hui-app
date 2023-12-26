@@ -21,13 +21,16 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'password' => $this->password,
             'avatar' => $this->avatar,
-            'role' => $this->role,
+            'role' => [
+                'role_id' => $this->role,
+                'role_name' => $this->roles->name
+            ],
             'cccd_after' => $this->cccd_after,
             'cccd_before' => $this->cccd_before,
             'email_verified_at' => $this->email_verified_at,
             'remember_token' => $this->remember_token,
-            'created_at' => $this->created_at->format('d/m/Y'),
-            'updated_at' => $this->updated_at->format('d/m/Y'),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

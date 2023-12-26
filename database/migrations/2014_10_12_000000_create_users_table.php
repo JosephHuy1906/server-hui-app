@@ -12,16 +12,15 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('phone')->nullable();
-            $table->string('avatar')->nullable();
+            $table->text('avatar')->nullable();
             $table->unsignedBigInteger('role')->default(3);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('cccd_after');
-            $table->string('cccd_before');
+            $table->text('cccd_after')->nullable();
+            $table->text('cccd_before')->nullable();
             $table->rememberToken();
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent();
+            $table->timestamps();
             $table->integer('user_count')->default(0);
             $table->foreign('role')->references('id')->on('role')->constrained()
                 ->onDelete('cascade')

@@ -12,26 +12,21 @@ class ImageController extends Controller
 {
     public function getImageUser($filename)
     {
-
         if (!Storage::exists("/public/images/users/{$filename}")) {
             abort(404);
         }
-
         $file = Storage::get("/public/images/users/{$filename}");
         $type = Storage::mimeType("/public/images/users/{$filename}");
 
         return response($file)->header('Content-Type', $type);
     }
-    public function getImageProduct($filename)
+    public function getImageRoom($filename)
     {
-
-        if (!Storage::exists("/public/images/products/{$filename}")) {
+        if (!Storage::exists("/public/images/room/{$filename}")) {
             abort(404);
         }
-
-        $file = Storage::get("/public/images/products/{$filename}");
-        $type = Storage::mimeType("/public/images/products/{$filename}");
-
+        $file = Storage::get("/public/images/room/{$filename}");
+        $type = Storage::mimeType("/public/images/room/{$filename}");
         return response($file)->header('Content-Type', $type);
     }
 
