@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
+
 {
     public function postMessage(Request $request)
     {
