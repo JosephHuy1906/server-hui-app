@@ -29,9 +29,9 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('/signup', [AuthController::class, 'signup']);
     Route::post('/update-avatar/{id}', [AuthController::class, 'updateAvatar']);
-    Route::put('/update-password/{user}', [AuthController::class, 'updatePassword']);
     Route::put('/update-password/{user}', [UserController::class, 'updatePassword']);
-    Route::post('/update-avatar/{id}', [UserController::class, 'updateAvatar']);
+    Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
+    Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
 });
 Route::get('room/user/{userId}/{item}', [RoomController::class, 'getRoomsByUserId']);
 Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);

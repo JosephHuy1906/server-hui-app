@@ -48,6 +48,7 @@ class UserController extends Controller
     public function updateCCCD(Request $request, $id)
     {
         try {
+            $image = new ImageController();
             $response = new ResponseController();
             $validateUser = Validator::make(
                 $request->all(),
@@ -57,20 +58,24 @@ class UserController extends Controller
                 ]
             );
 
-            $image = new ImageController();
             if ($validateUser->fails()) {
                 return $response->errorResponse("Validation error", $validateUser->errors(), 400);
+            }
+
+            $user = User::find($id);
+            if (!$user) {
+                return $this->errorResponse('User not found', null, 404);
             }
 
             $cccdAfterPath = $image->uploadImage($request->file('cccd_after'), 'images/users');
             $cccdBeforePath = $image->uploadImage($request->file('cccd_before'), 'images/users');
 
-            $user = User::create([
+            $user->update([
                 'cccd_after' => $cccdAfterPath,
                 'cccd_before' => $cccdBeforePath,
             ]);
 
-            return $response->successResponse("User Created Successfully", new UserResource($user), 201);
+            return $response->successResponse("User update CCCD Successfully", null, 201);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
@@ -80,6 +85,10 @@ class UserController extends Controller
     {
         try {
             $response = new ResponseController();
+            if ($user->id !== auth()->id()) {
+                return $response->errorResponse('Unauthorized', 'You do not have permission to update this password', 401);
+            }
+
             $validator = Validator::make($request->all(), [
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|same:password',
@@ -92,13 +101,13 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
             $user->save();
 
-            return  $response->successResponse('Password updated successfully', null, 201);
+            return $response->successResponse('Password updated successfully', null, 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $response->errorResponse('Server Error', $th->getMessage(), 500);
         }
     }
 
-    public function update(Request $request, User $user)
+    public function updateInfo(Request $request, $id)
     {
         try {
             $response = new ResponseController();
@@ -111,9 +120,14 @@ class UserController extends Controller
                 return $response->errorResponse('Input error value', $validator->errors(), 400);
             }
 
+            $user = User::find($id);
+            if (!$user) {
+                return $this->errorResponse('User not found', null, 404);
+            }
+
             $data = $request->input();
             $user->update($data);
-            return $response->successResponse('User update successfully', new UserResource($user), 201);
+            return $response->successResponse('User update successfully', null, 201);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
