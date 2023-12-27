@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('message', function (Blueprint $table) {
+        Schema::create('auction_hui_detail', function (Blueprint $table) {
             $table->id();
             $table->uuid('user_id');
-            $table->text('message');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('room_id')->references('id')->on('rooms');
+            $table->integer('starting_price');
+            $table->float('auction_percentage');
+            $table->float('total_price');
             $table->timestamps();
+            $table->foreignId('auction_hui_id')->references('id')->on('auction_hui_room');
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('message');
+        Schema::dropIfExists('auction_hui_detail');
     }
 };

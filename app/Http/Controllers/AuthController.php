@@ -51,6 +51,7 @@ class AuthController extends Controller
                     'name' => 'required',
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|min:6',
+                    'phone' => 'required',
                 ]
             );
             $response = new ResponseController();
@@ -61,8 +62,7 @@ class AuthController extends Controller
                 foreach ($errors->messages() as $field => $messages) {
                     foreach ($messages as $message) {
                         $errorMessages[] = [
-                            'field' => $field,
-                            'message' => $message,
+                            'error' => $message,
                         ];
                     }
                 }
@@ -75,6 +75,7 @@ class AuthController extends Controller
             User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'phone' => $request->phone,
                 'password' => Hash::make($request->password),
             ]);
 

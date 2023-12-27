@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('message', function (Blueprint $table) {
-            $table->id();
+        Schema::create('check_out', function (Blueprint $table) {
+            $table->uuid();
             $table->uuid('user_id');
-            $table->text('message');
+            $table->string('price');
+            $table->string('description');
+            $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('room_id')->references('id')->on('rooms');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('message');
+        Schema::dropIfExists('check_out');
     }
 };

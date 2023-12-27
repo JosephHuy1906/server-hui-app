@@ -17,6 +17,7 @@ class RoomUserController extends Controller
     {
         try {
             $response = new ResponseController();
+            $noti = new NotificationController();
             $validator = Validator::make($request->all(), [
                 'room_id' => 'required',
                 'user_id' => 'required',
@@ -44,6 +45,8 @@ class RoomUserController extends Controller
                     ->where('room_id', $request->room_id)
                     ->where('user_id', $request->user_id)
                     ->delete();
+
+                $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi', $request->room_id);
                 return $response->successResponse('Remove User for room successfully', null, 201);
             } else {
                 DB::table('room_user')->insert([
@@ -52,8 +55,25 @@ class RoomUserController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+                $noti->postNotification($request->user_id, 'user', 'Bạn đã tham gia vào phòng hụi thành công', $request->room_id);
                 return $response->successResponse('Add User for room successfully', null, 201);
             }
+        } catch (\Throwable $err) {
+            return $response->errorResponse("Server Error", $err->getMessage(), 500);
+        }
+    }
+
+    public function addAdminForRoom($room_id, $user_id)
+    {
+        try {
+            $response = new ResponseController();
+            DB::table('room_user')->insert([
+                'room_id' => $room_id,
+                'user_id' => $user_id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            return $response->successResponse('Add Admin for room successfully', null, 201);
         } catch (\Throwable $err) {
             return $response->errorResponse("Server Error", $err->getMessage(), 500);
         }

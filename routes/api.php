@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AuctionHuiDetailController;
+use App\Http\Controllers\AuctionHuiRoomController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomUserController;
 use App\Http\Controllers\UserController;
@@ -23,6 +26,13 @@ Route::post('room/actionroom', [RoomUserController::class, 'addUserForRoom']);
 Route::post('room/addroom', [RoomController::class, 'addroom']);
 Route::post('message/postMess', [MessageController::class, 'postMessage']);
 Route::get('message/room/{id}', [MessageController::class, 'getMessage']);
+Route::get('notification/user/{id}', [NotificationController::class, 'getNotiByUser']);
+Route::post('notification/post', [NotificationController::class, 'sendNotification']);
+Route::post('auction-room/', [AuctionHuiRoomController::class, 'createAuctionHui']);
+Route::post('auction-hui/user', [AuctionHuiDetailController::class, 'auctionHui']);
+Route::get('auction-hui/room/{id}', [AuctionHuiDetailController::class, 'getAuctionHui']);
+Route::delete('auction-hui/remove/{id}', [AuctionHuiRoomController::class, 'removeAuctionHui']);
+Route::get('auction-hui/user/win/{id}', [AuctionHuiDetailController::class, 'getTotal']);
 
 
 Route::group([
