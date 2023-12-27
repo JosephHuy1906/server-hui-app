@@ -50,7 +50,9 @@ class MessageController extends Controller
     {
         try {
             $response = new ResponseController();
-            $messages = Message::where('room_id', $id)->get();
+            $messages = Message::where('room_id', $id)
+                ->orderBy('created_at', 'desc')
+                ->get();
             return $response->successResponse('Get messages by room_id success', MessageResource::collection($messages), 200);
         } catch (\Throwable $err) {
             return $response->errorResponse("Server Error", $err->getMessage(), 500);

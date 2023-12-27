@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MessageResource extends JsonResource
+class AuctionHuiRoomResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,12 +17,8 @@ class MessageResource extends JsonResource
         return [
             'id' => $this->id,
             'room_id' => $this->room_id,
-            'user' =>  [
-                'user_id' => $this->user_id,
-                'user_name' => $this->user->name,
-                'user_avatar' => $this->user->avatar
-            ],
-            'message' => $this->message,
+            'starting_price' => $this->starting_price,
+            'time_end' => $this->time_end,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

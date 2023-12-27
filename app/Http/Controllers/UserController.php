@@ -23,6 +23,7 @@ class UserController extends Controller
                     'name' => 'required',
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|min:6',
+                    'phone' => 'required',
                 ]
             );
             $image = new ImageController();
@@ -38,6 +39,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'phone' => 'required',
             ]);
 
             return $response->successResponse("User Created Successfully", new UserResource($user), 200);
@@ -75,7 +77,7 @@ class UserController extends Controller
                 'cccd_before' => $cccdBeforePath,
             ]);
 
-            return $response->successResponse("User update CCCD Successfully", null, 201);
+            return $response->successResponse("User update CCCD Successfully", new UserResource($user), 201);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }

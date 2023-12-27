@@ -20,12 +20,13 @@ class RoomResource extends JsonResource
             'price_room' => $this->price_room,
             'avatar' => $this->avatar,
             'commission_percentage' => $this->commission_percentage,
-            'date_end' => $this->date_end,
-            'date_start' => $this->date_start,
+            'date_room_end' => $this->date_room_end,
+            'total_user' => $this->total_user,
+            'payment_time' => $this->payment_time,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user_count' => $this->users_count ?? 0,
-
+            'is_near_end' => false,
         ];
     }
 }

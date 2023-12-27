@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->string('price_room');
             $table->string('avatar')->nullable();
-            $table->double('commission_percentage');
-            $table->timestamp('date_start')->nullable();
-            $table->timestamp('date_end')->nullable();
+            $table->double('commission_percentage')->default(3);
+            $table->enum('payment_time', ['End day', 'End of Month']);
+            $table->timestamp('date_room_end');
+            $table->integer('total_user');
             $table->timestamps();
         });
     }

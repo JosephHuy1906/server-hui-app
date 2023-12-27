@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('message', function (Blueprint $table) {
+        Schema::create('bank_account', function (Blueprint $table) {
             $table->id();
             $table->uuid('user_id');
-            $table->text('message');
+            $table->string('name_bank');
+            $table->string('stk');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('room_id')->references('id')->on('rooms');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('message');
+        Schema::dropIfExists('bank_account');
     }
 };
