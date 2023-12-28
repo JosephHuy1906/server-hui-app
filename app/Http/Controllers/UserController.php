@@ -117,6 +117,7 @@ class UserController extends Controller
             $response = new ResponseController();
             $validator = Validator::make($request->all(), [
                 'name' => 'sometimes|required',
+                'email' => 'sometimes|required',
                 'phone' => 'sometimes|required',
                 'address' => 'sometimes|required',
                 'birthday' => 'sometimes|required',
