@@ -14,13 +14,12 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
 Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
 
 Route::get('room/user/{userId}/{item}', [RoomController::class, 'getRoomsByUserId']);
+
 Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);
 Route::post('room/actionroom', [RoomUserController::class, 'addUserForRoom']);
 Route::post('room/addroom', [RoomController::class, 'addroom']);
@@ -49,4 +48,5 @@ Route::group([
     Route::post('/update-password/{user}', [UserController::class, 'updatePassword']);
     Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
+    Route::get('users/', [UserController::class, 'getAllUser']);
 });

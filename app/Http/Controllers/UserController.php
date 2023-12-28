@@ -171,4 +171,15 @@ class UserController extends Controller
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
+
+    public function getAllUser()
+    {
+        try {
+            $response = new ResponseController();
+            $data = User::all();
+            return $response->successResponse('Get all user successfully',  UserResource::collection($data), 201);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
 }

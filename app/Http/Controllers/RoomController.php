@@ -86,7 +86,7 @@ class RoomController extends Controller
 
             $addroom = Room::create($request->all());
             $room_id = $addroom->id;
-            $admin->addAdminForRoom($room_id, 'f472bb03-2020-4c64-a376-ab9c3ee5a684');
+            $admin->addAdminForRoom($room_id, '3a7a300a-13b3-4028-88d0-4f4ba1394099');
             return $response->successResponse('Create room success', new RoomResource($addroom), 201);
         } catch (\Throwable $err) {
             return $response->errorResponse('Create room faill', $err->getMessage(), 500);
