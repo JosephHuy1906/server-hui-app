@@ -20,12 +20,10 @@ class NotificationController extends Controller
                 return $response->errorResponse('Người dùng không tồn tại', null, 404);
             }
 
-            // Lấy toàn bộ notifications của user, sắp xếp theo thời gian tạo mới nhất
             $notifications = Notification::where('user_id', $id)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Kiểm tra xem có notifications hay không
             if ($notifications->isEmpty()) {
                 return $response->successResponse('Bạn chưa có thông báo nào', [], 200);
             }
