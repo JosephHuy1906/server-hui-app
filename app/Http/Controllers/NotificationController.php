@@ -73,4 +73,22 @@ class NotificationController extends Controller
             return $response->errorResponse('Error Server', $err->getMessage(), 500);
         }
     }
+
+    public function removeNotiByUser($id)
+    {
+        try {
+            $response = new ResponseController();
+            $noti = Notification::find($id);
+
+            if (!$noti) {
+                return $response->errorResponse('Thông báo không tồn tại không tồn tại', null, 404);
+            }
+
+            $noti->delete();
+
+            return $response->successResponse('Đã xoá thông báo', null, 201);
+        } catch (\Throwable $err) {
+            return $response->errorResponse('Error Server', $err->getMessage(), 500);
+        }
+    }
 }

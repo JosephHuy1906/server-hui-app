@@ -28,9 +28,10 @@ Route::post('message/postMess', [MessageController::class, 'postMessage']);
 Route::get('message/room/{id}', [MessageController::class, 'getMessage']);
 Route::get('notification/user/{id}', [NotificationController::class, 'getNotiByUser']);
 Route::post('notification/post', [NotificationController::class, 'sendNotification']);
+Route::delete('notification/remove/{id}', [NotificationController::class, 'removeNotiByUser']);
 Route::post('auction-room/', [AuctionHuiRoomController::class, 'createAuctionHui']);
 Route::post('auction-hui/user', [AuctionHuiDetailController::class, 'auctionHui']);
-Route::get('auction-hui/room/{id}', [AuctionHuiDetailController::class, 'getAuctionHui']);
+Route::get('auction-hui/hui-room/{id}', [AuctionHuiDetailController::class, 'getAuctionHui']);
 Route::delete('auction-hui/remove/{id}', [AuctionHuiRoomController::class, 'removeAuctionHui']);
 Route::get('auction-hui/user/win/{id}', [AuctionHuiDetailController::class, 'getTotal']);
 
@@ -45,7 +46,7 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('/signup', [AuthController::class, 'signup']);
     Route::post('/update-avatar/{id}', [UserController::class, 'updateAvatar']);
-    Route::put('/update-password/{user}', [UserController::class, 'updatePassword']);
+    Route::post('/update-password/{user}', [UserController::class, 'updatePassword']);
     Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
 });
