@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('check_out', function (Blueprint $table) {
-            $table->uuid();
+            $table->uuid('id')->default(\Ramsey\Uuid\Uuid::uuid4());
             $table->uuid('user_id');
             $table->string('price');
             $table->string('description');

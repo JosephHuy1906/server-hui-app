@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuctionHuiDetailController;
 use App\Http\Controllers\AuctionHuiRoomController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
@@ -33,6 +34,9 @@ Route::post('auction-hui/user', [AuctionHuiDetailController::class, 'auctionHui'
 Route::get('auction-hui/hui-room/{id}', [AuctionHuiDetailController::class, 'getAuctionHui']);
 Route::delete('auction-hui/remove/{id}', [AuctionHuiRoomController::class, 'removeAuctionHui']);
 Route::get('auction-hui/user/win/{id}', [AuctionHuiDetailController::class, 'getTotal']);
+Route::post('checkout', [CheckoutController::class, 'vnpay_checkout']);
+Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);
+Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
 
 
 Route::group([
