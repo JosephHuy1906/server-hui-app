@@ -16,7 +16,7 @@ class RoomSeeder extends Seeder
         $room = [
             [
                 'title' => 'Hụi Sài gòn',
-                'price_room' => '10000000',
+                'price_room' => 10000000,
                 'commission_percentage' => 3,
                 'avatar' => 'https://www.guidevietnam.org/wp-content/uploads/2017/04/Bitexco-Financial-Tower-Sky-Deck-in-Ho-Chi-Minh.jpg',
                 'total_user' => 5,
@@ -27,7 +27,7 @@ class RoomSeeder extends Seeder
             ],
             [
                 'title' => 'Bảo Lộc',
-                'price_room' => '5000000',
+                'price_room' => 5000000,
                 'commission_percentage' => 3,
                 'avatar' => 'https://focusasiatravel.vn/wp-content/uploads/2018/09/Th%C3%A0nh-ph%E1%BB%91-B%E1%BA%A3o-L%E1%BB%99c-768x477.jpg',
                 'total_user' => 10,
@@ -38,7 +38,7 @@ class RoomSeeder extends Seeder
             ],
             [
                 'title' => 'Bảo Lộc vip pro',
-                'price_room' => '5500000',
+                'price_room' => 5500000,
                 'commission_percentage' => 3,
                 'avatar' => 'https://vietchallenge.com/images/tour/ba9532ec3a59358795612f64e6b01e20.jpg',
                 'total_user' => 20,
