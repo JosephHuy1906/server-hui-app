@@ -100,8 +100,10 @@ class UserController extends Controller
                 return $response->errorResponse('Validation error', $validator->errors(), 400);
             }
 
-            $user->password = Hash::make($request->password);
-            $user->save();
+            $data =  $user->password = Hash::make($request->password);
+            $user->update([
+                'password' => $data
+            ]);
 
             return $response->successResponse('Password updated successfully', null, 200);
         } catch (\Throwable $th) {
@@ -130,7 +132,7 @@ class UserController extends Controller
                 return $this->errorResponse('User not found', null, 404);
             }
 
-            $data = $request->input();
+            $data = $request->all();
             $user->update($data);
             return $response->successResponse('User update successfully', null, 201);
         } catch (\Throwable $th) {
