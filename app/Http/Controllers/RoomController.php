@@ -116,4 +116,14 @@ class RoomController extends Controller
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
+    public function getDetailRoom($id)
+    {
+        try {
+            $response = new ResponseController();
+            $data = Room::withCount('users')->with(['users'])->findOrFail($id);
+            return $response->successResponse('Get Detail room', new RoomResource($data), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
 }
