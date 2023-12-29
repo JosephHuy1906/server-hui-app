@@ -11,7 +11,7 @@ class RoomResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        $auctionHuiRoomId = AuctionHuiRoom::where('room_id', $this->id)->value('id');
+        $auctionHuiRoomId = AuctionHuiRoom::where('room_id', $this->id)->get();
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -24,7 +24,13 @@ class RoomResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user_count' => $this->users_count ?? 0,
-            'auction_hui_room_id' => $auctionHuiRoomId,
+            'auction_hui_room_id' => $auctionHuiRoomId->map(function ($auction) {
+                return [
+                    'id' => $auction->id,
+                    'starting_price' => $auction->starting_price,
+                    'time_end' => $auction->time_end,
+                ];
+            }),
             'is_near_end' => false,
             'users' => $this->users->map(function ($user) {
                 return [

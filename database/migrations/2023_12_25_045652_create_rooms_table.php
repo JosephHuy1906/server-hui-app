@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('price_room');
+            $table->integer('price_room');
             $table->string('avatar')->nullable();
             $table->double('commission_percentage')->default(3);
             $table->enum('payment_time', ['End day', 'End of Month']);

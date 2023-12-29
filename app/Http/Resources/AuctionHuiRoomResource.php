@@ -19,8 +19,6 @@ class AuctionHuiRoomResource extends JsonResource
             'room_id' => $this->room_id,
             'starting_price' => $this->starting_price,
             'time_end' => $this->time_end,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

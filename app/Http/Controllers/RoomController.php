@@ -20,7 +20,6 @@ class RoomController extends Controller
             $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->get();
-
             return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
@@ -54,8 +53,6 @@ class RoomController extends Controller
             if (!$check_day) {
                 $noti->postNotification($item, 'user', 'Nhóm còn một ngày nữa sẽ giải tán', $userId);
             }
-
-
             return $response->successResponse('Get room by User success', RoomResource::collection($userRooms), 200);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
@@ -90,6 +87,43 @@ class RoomController extends Controller
             return $response->successResponse('Create room success', new RoomResource($addroom), 201);
         } catch (\Throwable $err) {
             return $response->errorResponse('Create room faill', $err->getMessage(), 500);
+        }
+    }
+
+    public function getRoomsByCount($item)
+    {
+        try {
+            $response = new ResponseController();
+            $rooms = Room::withCount('users')->with(['users'])
+                ->take($item)
+                ->orderBy('users_count', 'desc')
+                ->get();
+            return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+    public function getRoomsByPrice($item)
+    {
+        try {
+            $response = new ResponseController();
+            $rooms = Room::withCount('users')->with(['users'])
+                ->take($item)
+                ->orderBy('price_room', 'asc')
+                ->get();
+            return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+    public function getDetailRoom($id)
+    {
+        try {
+            $response = new ResponseController();
+            $data = Room::withCount('users')->with(['users'])->findOrFail($id);
+            return $response->successResponse('Get Detail room', new RoomResource($data), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
 }

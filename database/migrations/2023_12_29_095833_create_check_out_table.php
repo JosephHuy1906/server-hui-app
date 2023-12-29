@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('check_out', function (Blueprint $table) {
-            $table->uuid();
+            $table->string('id')->primary();
             $table->uuid('user_id');
-            $table->string('price');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('price');
+            $table->foreignId('user_win_hui_id')->references('id')->on('user_win_hui')->constrained()
+                ->onDelete('cascade')
+                ->onUpdate('cascade');;
             $table->string('description');
             $table->enum('status', ['pending', 'approved', 'rejected']);
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
