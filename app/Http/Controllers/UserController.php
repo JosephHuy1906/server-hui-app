@@ -135,7 +135,7 @@ class UserController extends Controller
 
             $data = $request->all();
             $user->update($data);
-            return $response->successResponse('User update successfully', null, 201);
+            return $response->successResponse('User update successfully', new UserResource($user), 201);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }

@@ -108,10 +108,11 @@ class AuctionHuiDetailController extends Controller
             ];
 
             $addUser =  UserWinHui::create($addUserWin);
+            $totalAmountPayable = number_format($total_money_received, 0, ',', '.') . ' đ';
             $notication->postNotification(
                 $winningBidder->user->user_id,
                 'User',
-                'Bạn đã đấu hụi thành công với số tiền: ' . $total_money_received . 'đ.Vui lòng thanh toán để nhận số tiền trên',
+                'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
                 $request->room_id
             );
             return $response->successResponse('Create user win hui successfully', new UserWinHuiResource($addUser), 201);

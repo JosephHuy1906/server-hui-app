@@ -21,11 +21,36 @@ class NotificationController extends Controller
             }
 
             $notifications = Notification::where('user_id', $id)
+                ->where('status', 'user')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
             if ($notifications->isEmpty()) {
                 return $response->successResponse('Bạn chưa có thông báo nào', [], 200);
+            }
+
+            return $response->successResponse('Danh sách thông báo', $notifications, 200);
+        } catch (\Throwable $err) {
+            return $response->errorResponse('Error Server', $err->getMessage(), 500);
+        }
+    }
+    public function getNotiByAdmin($id)
+    {
+        try {
+            $response = new ResponseController();
+            $user = User::find($id);
+
+            if (!$user) {
+                return $response->errorResponse('Người dùng không tồn tại', null, 404);
+            }
+
+            $notifications = Notification::where('user_id', $id)
+                ->where('status', 'admin')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            if ($notifications->isEmpty()) {
+                return $response->successResponse('Admin chưa có thông báo nào', [], 200);
             }
 
             return $response->successResponse('Danh sách thông báo', $notifications, 200);

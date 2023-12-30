@@ -207,7 +207,9 @@ class CheckoutController extends Controller
             $find->update([
                 'status' => 'paid'
             ]);
-            $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $find->total_amount_payable . 'đ tiền đấu hụi', $find->room_id);
+            $totalAmountPayable = number_format($find->total_amount_payable, 0, ',', '.') . ' đ';
+            $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $totalAmountPayable . ' tiền đấu hụi', $find->room_id);
+            $notication->postNotification($find->user_id, 'admin', 'User đã thanh toán tiền' . $totalAmountPayable . ' đấu hụi', $find->room_id);
         } catch (\Throwable $e) {
             return $response->errorResponse('Server Error', $e->getMessage(), 500);
         }
