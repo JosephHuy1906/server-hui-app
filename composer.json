@@ -10,7 +10,9 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "tymon/jwt-auth": "^2.0"
+        "socialiteproviders/zalo": "^5.0",
+        "tymon/jwt-auth": "^2.0",
+        "zaloplatform/zalo-php-sdk": "^4.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

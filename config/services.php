@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'zalo' => [
+        'client_id' => env('ZALO_CLIENT_ID'),
+        'client_secret' => env('ZALO_CLIENT_SECRET'),
+        'redirect' => env('ZALO_REDIRECT_URI')
+    ],
+
 ];

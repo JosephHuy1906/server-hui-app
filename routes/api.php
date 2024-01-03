@@ -9,6 +9,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomUserController;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserWinHuiController;
 use Illuminate\Http\Request;
@@ -42,7 +43,8 @@ Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);
 Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
 Route::get('auction/user-win/{id}', [UserWinHuiController::class, 'getHuiByUser']);
 Route::get('auction/{id}', [UserWinHuiController::class, 'updatePaid']);
-
+Route::get('member/login-social/zalo', [SocialController::class, 'loginSocial']);
+Route::get('member/callback/zalo', [SocialController::class, 'callbackSocial']);
 Route::get('remaining-time/{id}', [AuctionHuiRoomController::class, 'getRemainingTime']);
 
 
