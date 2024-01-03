@@ -43,7 +43,6 @@ Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
 Route::get('auction/user-win/{id}', [UserWinHuiController::class, 'getHuiByUser']);
 Route::get('auction/{id}', [UserWinHuiController::class, 'updatePaid']);
 
-Route::get('remaining-time/{id}', [AuctionHuiRoomController::class, 'getRemainingTime']);
 
 
 Route::group([

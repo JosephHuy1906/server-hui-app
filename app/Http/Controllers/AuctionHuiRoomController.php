@@ -40,23 +40,6 @@ class AuctionHuiRoomController extends Controller
         }
     }
 
-    public function getRemainingTime($id)
-    {
-        $room = AuctionHuiRoom::findOrFail($id);
-
-        // Lấy thời gian hiện tại
-        $currentTime = Carbon::now();
-
-        // Lấy thời gian kết thúc từ thông tin của phòng
-        $endTime = Carbon::parse($room->time_end);
-
-        // Tính thời gian đếm ngược
-        $remainingTime = $currentTime->diffInSeconds($endTime);
-
-        // Trả về dữ liệu dưới dạng JSON
-        return response()->json(['remaining_time' => $remainingTime]);
-    }
-
 
     public function removeAuctionHui($id)
     {
