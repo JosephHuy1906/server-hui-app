@@ -108,7 +108,7 @@ class AuctionHuiDetailController extends Controller
             ];
 
             $addUser =  UserWinHui::create($addUserWin);
-            $totalAmountPayable = number_format($total_money_received, 0, ',', '.') . ' đ';
+            $totalAmountPayable = number_format($total_money_received, 0, ',', '.');
             $notication->postNotification(
                 $winningBidder->user->user_id,
                 'User',
