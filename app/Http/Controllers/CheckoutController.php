@@ -336,7 +336,11 @@ class CheckoutController extends Controller
                 'Hoá đơn với số tiền: ' . $totalAmountPayable . 'đ đang chờ bạn thanh toán',
                 $request->room_id
             );
-            return $respon->successResponse('Create Payment link success', $response["data"]["checkoutUrl"], 201);
+            return $respon->successResponse(
+                'Create Payment link success',
+                ['bankURL' => $response["data"]["checkoutUrl"]],
+                201
+            );
         } catch (\Throwable $th) {
             return $respon->errorResponse("Server Error", $th->getMessage(), 500);
         }
@@ -397,7 +401,7 @@ class CheckoutController extends Controller
                 $request->room_id
             );
 
-            return $respon->successResponse("Cannel Payment link info success", $response["data"], 201);
+            return $respon->successResponse("Cannel Payment link info success", $response["data"], 200);
         } catch (\Throwable $th) {
             return $respon->errorResponse("Server Error", $th->getMessage(), 500);
         }

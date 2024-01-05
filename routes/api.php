@@ -44,6 +44,7 @@ Route::get('auction/{id}', [UserWinHuiController::class, 'updatePaid']);
 
 Route::post('create-payment-link', [CheckoutController::class, 'createPaymentLink']);
 Route::get('payment-info/{id}', [CheckoutController::class, 'getPaymentLinkInfoOfOrder']);
+Route::get('payment-cancel/{id}', [CheckoutController::class, 'cancelPaymentLinkOfOrder']);
 
 
 Route::group([
