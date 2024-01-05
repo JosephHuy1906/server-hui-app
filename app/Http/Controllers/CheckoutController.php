@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CheckoutResource;
 use App\Models\Checkout;
 use App\Models\UserWinHui;
 use Exception;
@@ -292,12 +293,13 @@ class CheckoutController extends Controller
                 'amount' => 'required',
                 'description' => 'required',
                 'user_id' => 'required',
+                'room_id' => 'sometimes',
+                'user_win_hui_id' => 'sometimes'
             ]);
-
             if ($validator->fails()) {
                 return $respon->errorResponse('Input value error', $validator->errors(), 400);
             }
-            $oderID = intval(substr(strval(microtime(true) * 10000), -6));
+            $oderID = intval(substr(strval(microtime(true) * 10000), -64));
             $data = [
                 "orderCode" => $oderID,
                 "amount" => $request->amount,
@@ -305,29 +307,27 @@ class CheckoutController extends Controller
                 "returnUrl" => $baseUrl . "/success",
                 "cancelUrl" => $baseUrl . "/cancel"
             ];
+            $PAYOS_CLIENT_ID = env('PAYOS_CLIENT_ID');
+            $PAYOS_API_KEY = env('PAYOS_API_KEY');
+            $PAYOS_CHECKSUM_KEY = env('PAYOS_CHECKSUM_KEY');
+            $requestSignature = $this->createSignaturePaymentRequest($PAYOS_CHECKSUM_KEY, $data);
+            $data["signature"] = $requestSignature;
+            $response = Http::withHeaders([
+                "x-client-id" => $PAYOS_CLIENT_ID,
+                "x-api-key" => $PAYOS_API_KEY
+            ])->post("https://api-merchant.payos.vn/v2/payment-requests", $data)->json();
+            $responseDataSignature = $this->createSignatureFromObj($PAYOS_CHECKSUM_KEY, $response["data"]);
+            if ($responseDataSignature != $response["signature"]) {
+                return $respon->errorResponse("Signature not match", null, 404);
+            }
             $dataCheckOut = [
                 "id" => $oderID,
                 "price" => $request->amount,
                 "description" => $request->description,
                 "user_id" => $request->user_id,
+                'room_id' => $request->room_id,
+                'user_win_hui_id' => $request->user_win_hui_id
             ];
-            $PAYOS_CLIENT_ID = env('PAYOS_CLIENT_ID');
-            $PAYOS_API_KEY = env('PAYOS_API_KEY');
-            $PAYOS_CHECKSUM_KEY = env('PAYOS_CHECKSUM_KEY');
-
-            $requestSignature = $this->createSignaturePaymentRequest($PAYOS_CHECKSUM_KEY, $data);
-            $data["signature"] = $requestSignature;
-
-
-            $response = Http::withHeaders([
-                "x-client-id" => $PAYOS_CLIENT_ID,
-                "x-api-key" => $PAYOS_API_KEY
-            ])->post("https://api-merchant.payos.vn/v2/payment-requests", $data)->json();
-
-            $responseDataSignature = $this->createSignatureFromObj($PAYOS_CHECKSUM_KEY, $response["data"]);
-            if ($responseDataSignature != $response["signature"]) {
-                return $respon->errorResponse("Signature not match", null, 404);
-            }
             Checkout::create($dataCheckOut);
             $totalAmountPayable = number_format($request->amount, 0, ',', '.');
             $notication->postNotification(

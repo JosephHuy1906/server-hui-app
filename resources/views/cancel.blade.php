@@ -50,6 +50,8 @@ $checkout->updateStatusReject($orderCode);
             bottom: 0;
             left: 0;
             display: flex;
+            height: 100vh;
+            background-color: #dedede;
         }
 
         .modal__message {
@@ -123,7 +125,7 @@ $checkout->updateStatusReject($orderCode);
                 <img src="./icon-cancel.png" class="success" />
                 <h2 class="modal__title">Bạn đã huỷ thanh toán!</h2>
                 <p class="modal__desc">
-                    Bạn đã huỷ hoá đơn thanh toán với mã hoá đơn <b><?php echo $orderCode; ?></b>, vui lòng quay lại app!</p>
+                    Bạn đã huỷ hoá đơn thanh toán với mã hoá đơn <b>#<?php echo $orderCode; ?></b>, vui lòng quay lại app!</p>
                 <div class="modal__footer">
                     <a href="#" class="modal__link home">Ok</a>
                 </div>

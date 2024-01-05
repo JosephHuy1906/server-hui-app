@@ -14,12 +14,21 @@ class Checkout extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
+    }
+    public function user_win_hui()
+    {
+        return $this->belongsTo(UserWinHui::class, 'user_win_hui_id');
+    }
     protected $fillable = [
         'id',
         'user_id',
         'price',
         'description',
         'user_win_hui_id',
-        'status'
+        'status',
+        'room_id',
     ];
 }

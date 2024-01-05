@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('check_out', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->uuid('user_id');
+            $table->unsignedBigInteger('room_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('room_id')->references('id')->on('rooms');
             $table->integer('price');
             $table->unsignedBigInteger('user_win_hui_id')->nullable();
             $table->foreign('user_win_hui_id')->references('id')->on('user_win_hui')
