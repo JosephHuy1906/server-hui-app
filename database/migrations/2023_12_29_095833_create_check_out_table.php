@@ -16,11 +16,13 @@ return new class extends Migration
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('price');
-            $table->foreignId('user_win_hui_id')->references('id')->on('user_win_hui')->constrained()
+            $table->unsignedBigInteger('user_win_hui_id')->nullable();
+            $table->foreign('user_win_hui_id')->references('id')->on('user_win_hui')
+                ->constrained()
                 ->onDelete('cascade')
-                ->onUpdate('cascade');;
+                ->onUpdate('cascade');
             $table->string('description');
-            $table->enum('status', ['pending', 'approved', 'rejected']);
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }

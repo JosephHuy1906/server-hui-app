@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('room_id')->references('id')->on('rooms');
             $table->integer('total_money_received');
             $table->integer('total_amount_payable');
-            $table->enum('status', ['unpaid', 'paid']);
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
