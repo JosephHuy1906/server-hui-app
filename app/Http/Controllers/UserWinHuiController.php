@@ -35,4 +35,16 @@ class UserWinHuiController extends Controller
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
+    public function getAll()
+    {
+        try {
+            $response = new ResponseController();
+
+            $data = UserWinHui::all();
+
+            return $response->successResponse('Tất cả  Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
 }

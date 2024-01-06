@@ -413,6 +413,17 @@ class CheckoutController extends Controller
         $signature = hash_hmac("sha256", $dataStr, $checksumKey);
         return $signature;
     }
+    public function getAll()
+    {
+        try {
+            $response = new ResponseController();
+            $data = Checkout::all();
+
+            return $response->successResponse('Tất cả Danh sách checkout thành công', CheckoutResource::collection($data), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
     public function createSignatureFromObj($checksumKey, $obj)
     {
         ksort($obj);

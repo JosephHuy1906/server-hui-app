@@ -41,6 +41,8 @@ Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);
 Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
 Route::get('auction/user-win/{id}', [UserWinHuiController::class, 'getHuiByUser']);
 Route::get('auction/{id}', [UserWinHuiController::class, 'updatePaid']);
+Route::get('auction-user-win', [UserWinHuiController::class, 'getAll']);
+Route::get('checkout', [CheckoutController::class, 'getAll']);
 
 Route::post('create-payment-link', [CheckoutController::class, 'createPaymentLink']);
 Route::get('payment-info/{id}', [CheckoutController::class, 'getPaymentLinkInfoOfOrder']);
