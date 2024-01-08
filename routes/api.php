@@ -21,7 +21,6 @@ Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])-
 Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
 
 Route::get('room/user/{userId}/{item}', [RoomController::class, 'getRoomsByUserId']);
-
 Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);
 Route::post('room/actionroom', [RoomUserController::class, 'addUserForRoom']);
 Route::post('room/addroom', [RoomController::class, 'addroom']);
@@ -42,7 +41,12 @@ Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);
 Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
 Route::get('auction/user-win/{id}', [UserWinHuiController::class, 'getHuiByUser']);
 Route::get('auction/{id}', [UserWinHuiController::class, 'updatePaid']);
+Route::get('auction-user-win', [UserWinHuiController::class, 'getAll']);
+Route::get('checkout', [CheckoutController::class, 'getAll']);
 
+Route::post('create-payment-link', [CheckoutController::class, 'createPaymentLink']);
+Route::get('payment-info/{id}', [CheckoutController::class, 'getPaymentLinkInfoOfOrder']);
+Route::get('payment-cancel/{id}', [CheckoutController::class, 'cancelPaymentLinkOfOrder']);
 
 
 Route::group([

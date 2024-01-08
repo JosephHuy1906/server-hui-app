@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bank_account', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('short_name');
+            $table->string('number_bank');
+            $table->string('code');
             $table->uuid('user_id');
-            $table->string('name_bank');
-            $table->string('stk');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

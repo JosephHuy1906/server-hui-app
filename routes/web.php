@@ -19,3 +19,13 @@ Route::get('/', function () {
 });
 
 Route::match(['get', 'post'], '/vnpay-callback', [CheckoutController::class, 'handleCallback']);
+
+Route::post('/create-payment-link', [CheckoutController::class, 'createPaymentLink']);
+
+Route::get('/success', function () {
+    return view('success');
+});
+
+Route::get('/cancel', function () {
+    return view('cancel');
+});
