@@ -17,7 +17,9 @@ class RoomController extends Controller
     {
         try {
             $response = new ResponseController();
-            $rooms = Room::withCount('users')->with(['users'])
+            $rooms = Room::withCount('users')
+                ->with(['users'])
+                ->where('status', 'Open')
                 ->take($item)
                 ->get();
             return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
@@ -73,7 +75,8 @@ class RoomController extends Controller
                     'date_room_end' => 'required',
                     'payment_time' => 'required',
                     'avatar' => 'sometimes|required|image|mimes:jpeg,png,jpg|max:4048',
-                    'total_user' => 'required'
+                    'total_user' => 'required',
+                    'status' => 'Open'
                 ]
             );
 

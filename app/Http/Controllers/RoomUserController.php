@@ -32,6 +32,7 @@ class RoomUserController extends Controller
                 ->first();
 
             $user = User::find($request->user_id);
+            
             if (!$user) {
                 return $response->errorResponse('User_id does not exist', null, 400);
             }
