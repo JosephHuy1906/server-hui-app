@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->double('commission_percentage')->default(3);
             $table->enum('payment_time', ['End day', 'End of Month']);
+            $table->enum('status', ['Open', 'Lock', 'Close']);
             $table->timestamp('date_room_end');
             $table->integer('total_user');
             $table->timestamps();

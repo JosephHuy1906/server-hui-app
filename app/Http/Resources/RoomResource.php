@@ -23,7 +23,8 @@ class RoomResource extends JsonResource
             'payment_time' => $this->payment_time,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'user_count' => $this->users_count ?? 0,
+            'user_count' => ($this->users_count - 1) ?? 0,
+            'status' => $this->status,
             'auction_hui_room_id' => $auctionHuiRoomId->map(function ($auction) {
                 return [
                     'id' => $auction->id,
