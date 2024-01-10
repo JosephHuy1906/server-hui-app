@@ -35,6 +35,33 @@ class UserWinHuiController extends Controller
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
+    public  function calculateTotalAmountsByRoom($userId)
+    {
+        $response = new ResponseController();
+        $data = UserWinHui::where('user_id', $userId)->get();
+
+        if (!$data) {
+            return $response->errorResponse("User does not exist", null, 404);
+        }
+
+        $totals = [];
+
+        foreach ($data as $item) {
+            $roomId = $item->room_id;
+
+            if (!isset($totals[$roomId])) {
+                $totals[$roomId] = [
+                    'total_money_received' => 0,
+                    'total_amount_payable' => 0,
+                ];
+            }
+
+            $totals[$roomId]['total_money_received'] += $item->total_money_received;
+            $totals[$roomId]['total_amount_payable'] += $item->total_amount_payable;
+        }
+
+        return $response->successResponse("Tổng tiền bạn đã thắng và bạn phải nộp trong các phòng", $totals, 200);
+    }
     public function getAll()
     {
         try {

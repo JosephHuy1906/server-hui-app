@@ -25,25 +25,32 @@ Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);
 Route::post('room/actionroom', [RoomUserController::class, 'addUserForRoom']);
 Route::post('room/addroom', [RoomController::class, 'addroom']);
 Route::get('room/detail/{id}', [RoomController::class, 'getDetailRoom']);
+Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);
+Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
+Route::post('room/update-status/', [RoomController::class, 'updateStatusRoom']);
+Route::post('room/update-info/{id}', [RoomController::class, 'updateInfoRoom']);
+
 Route::post('message/postMess', [MessageController::class, 'postMessage']);
 Route::get('message/room/{id}', [MessageController::class, 'getMessage']);
+
 Route::get('notification/user/{id}', [NotificationController::class, 'getNotiByUser']);
 Route::post('notification/post', [NotificationController::class, 'sendNotification']);
 Route::delete('notification/remove/{id}', [NotificationController::class, 'removeNotiByUser']);
+
 Route::post('auction-room/', [AuctionHuiRoomController::class, 'createAuctionHui']);
 Route::post('auction-hui/user', [AuctionHuiDetailController::class, 'auctionHui']);
 Route::get('auction-hui/hui-room/{id}', [AuctionHuiDetailController::class, 'getAuctionHui']);
 Route::delete('auction-hui/remove/{id}', [AuctionHuiRoomController::class, 'removeAuctionHui']);
 Route::get('auction-hui/user/win/{id}', [AuctionHuiDetailController::class, 'getTotal']);
+
 Route::post('post-user-win', [AuctionHuiDetailController::class, 'postUserWin']);
-Route::post('checkout', [CheckoutController::class, 'checkout']);
-Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);
-Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
 Route::get('auction/user-win/{id}', [UserWinHuiController::class, 'getHuiByUser']);
 Route::get('auction/{id}', [UserWinHuiController::class, 'updatePaid']);
 Route::get('auction-user-win', [UserWinHuiController::class, 'getAll']);
-Route::get('checkout', [CheckoutController::class, 'getAll']);
+Route::get('user/total-price/{id}', [UserWinHuiController::class, 'calculateTotalAmountsByRoom']);
 
+Route::get('checkout', [CheckoutController::class, 'getAll']);
+Route::post('checkout', [CheckoutController::class, 'checkout']);
 Route::post('create-payment-link', [CheckoutController::class, 'createPaymentLink']);
 Route::get('payment-info/{id}', [CheckoutController::class, 'getPaymentLinkInfoOfOrder']);
 Route::get('payment-cancel/{id}', [CheckoutController::class, 'cancelPaymentLinkOfOrder']);
