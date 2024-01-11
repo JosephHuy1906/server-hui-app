@@ -13,10 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuids;
-    public function roles()
-    {
-        return $this->belongsTo(Role::class, 'role');
-    }
+  
     protected $fillable = [
         'name',
         'email',

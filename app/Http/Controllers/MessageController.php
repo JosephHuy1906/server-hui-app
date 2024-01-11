@@ -52,9 +52,32 @@ class MessageController extends Controller
             $response = new ResponseController();
             $messages = Message::where('room_id', $id)
                 ->get();
+            $this->checkAndUpdateRoomsStatus();
             return $response->successResponse('Get messages by room_id success', MessageResource::collection($messages), 200);
         } catch (\Throwable $err) {
             return $response->errorResponse("Server Error", $err->getMessage(), 500);
+        }
+    }
+
+    protected function checkAndUpdateRoomsStatus()
+    {
+        try {
+            $response = new ResponseController();
+            $notication = new NotificationController();
+            $rooms = Room::withCount('users')->get();
+            foreach ($rooms as $room) {
+                if ($room->total_user == ($room->users_count - 1) && $room->status === 'Open') {
+                    $room->update(['status' => 'Lock']);
+                    $usersInRoom = $room->users;
+                    foreach ($usersInRoom as $user) {
+                        $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi', $room->id);
+                    }
+                }
+            }
+
+            return $response->successResponse('Check and update room status success', null, 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
 }

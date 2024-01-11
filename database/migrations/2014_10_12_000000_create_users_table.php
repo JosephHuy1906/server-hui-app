@@ -13,21 +13,18 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone');
             $table->text('avatar')->nullable();
-            $table->unsignedBigInteger('role')->default(3);
             $table->string('email')->unique();
             $table->string('birthday')->nullable();
             $table->enum('sex', ['Nam', 'Nữ', 'Khác'])->nullable();
             $table->text('address')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->enum('role', ['User', 'Admin', 'SubAdmin'])->default('User');
             $table->string('password');
             $table->text('cccd_after')->nullable();
             $table->text('cccd_before')->nullable();
+            $table->integer('user_count')->default(0);
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            $table->integer('user_count')->default(0);
-            $table->foreign('role')->references('id')->on('role')->constrained()
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
         });
     }
 

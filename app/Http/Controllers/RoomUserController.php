@@ -49,7 +49,7 @@ class RoomUserController extends Controller
                         ->where('user_id', $request->user_id)
                         ->delete();
 
-                    $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi', $request->room_id);
+                    $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi ' . $room->title, $request->room_id);
                     return $response->successResponse('Remove User for room successfully', null, 201);
                 } else {
                     DB::table('room_user')->insert([
@@ -58,7 +58,7 @@ class RoomUserController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                    $noti->postNotification($request->user_id, 'user', 'Bạn đã tham gia vào phòng hụi thành công', $request->room_id);
+                    $noti->postNotification($request->user_id, 'user', 'Bạn đã tham gia vào phòng hụi ' . $room->title . ' thành công', $request->room_id);
                     return $response->successResponse('Add User for room successfully', null, 201);
                 }
             }
@@ -70,13 +70,13 @@ class RoomUserController extends Controller
                     ->first();
 
                 if (!$room_user) {
-                    return $response->errorResponse('Phòng hiện tại đã bị khoá', null, 400);
+                    return $response->errorResponse('Phòng hụi ' . $room->title . ' hiện tại đã bị khoá', null, 400);
                 }
 
-                return $response->successResponse('Bạn đã vào phòng thành công', null, 201);
+                return $response->successResponse('Bạn đã vào phòng hụi ' . $room->title . '  thành công', null, 201);
             }
             if ($room->status == 'Close') {
-                return $response->errorResponse('Phòng này hiện đã đóng và không còn hoạt động', null, 400);
+                return $response->errorResponse('Phòng hụi ' . $room->title . '  này hiện đã đóng và không còn hoạt động', null, 400);
             }
         } catch (\Throwable $err) {
             return $response->errorResponse("Server Error", $err->getMessage(), 500);

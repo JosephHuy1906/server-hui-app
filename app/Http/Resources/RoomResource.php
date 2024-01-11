@@ -38,6 +38,7 @@ class RoomResource extends JsonResource
                     'id' => $user->id,
                     'name' => $user->name,
                     'avatar' => $user->avatar,
+                    'role' => $user->role,
                 ];
             }),
 

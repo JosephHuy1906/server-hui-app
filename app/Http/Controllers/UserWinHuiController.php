@@ -16,9 +16,9 @@ class UserWinHuiController extends Controller
             $find = UserWinHui::find($id);
             if (!$find)  return $response->errorResponse("User Win id does not exist", null, 404);
             $find->update([
-                'status' => 'paid'
+                'status' => 'approved'
             ]);
-            $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $find->total_amount_payable . 'đ tiền đấu hụi', $find->room_id);
+            $notication->postNotification($find->user_id, $find->role, 'Bạn đã thanh toán ' . $find->total_amount_payable . 'đ tiền đấu hụi', $find->room_id);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
@@ -35,13 +35,13 @@ class UserWinHuiController extends Controller
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
-    public  function calculateTotalAmountsByRoom($userId)
+    public function calculateTotalAmountsByRoom($userId)
     {
         $response = new ResponseController();
-        $data = UserWinHui::where('user_id', $userId)->get();
+        $data = UserWinHui::where('user_id', $userId)->with('room')->get();
 
-        if (!$data) {
-            return $response->errorResponse("User does not exist", null, 404);
+        if ($data->isEmpty()) {
+            return $response->errorResponse("User does not exist or has no associated data", null, 404);
         }
 
         $totals = [];
@@ -51,6 +51,10 @@ class UserWinHuiController extends Controller
 
             if (!isset($totals[$roomId])) {
                 $totals[$roomId] = [
+                    'room_id' => $item->room_id,
+                    'room_name' => $item->room->title,
+                    'room_time_date_created' => $item->room->created_at,
+                    'room_time_date_end' => $item->room->date_room_end,
                     'total_money_received' => 0,
                     'total_amount_payable' => 0,
                 ];
@@ -60,7 +64,9 @@ class UserWinHuiController extends Controller
             $totals[$roomId]['total_amount_payable'] += $item->total_amount_payable;
         }
 
-        return $response->successResponse("Tổng tiền bạn đã thắng và bạn phải nộp trong các phòng", $totals, 200);
+        $result = array_values($totals);
+
+        return $response->successResponse("Tổng tiền bạn đã thắng và bạn phải nộp trong các phòng", $result, 200);
     }
     public function getAll()
     {

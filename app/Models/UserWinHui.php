@@ -9,6 +9,11 @@ class UserWinHui extends Model
 {
     use HasFactory;
     protected $table = 'user_win_hui';
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
+    }
     protected $fillable = [
         'id',
         'user_id',
