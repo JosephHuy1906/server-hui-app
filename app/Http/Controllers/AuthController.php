@@ -160,7 +160,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 780000000000
+            'expires_in' => auth('api')->factory()->getTTL() * 604800
         ]);
     }
     private function createRefreshToken()

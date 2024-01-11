@@ -16,7 +16,11 @@ class UserWinHuiResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user_id' => $this->user_id,
+            'user' => [
+                'user_id' => $this->user_id,
+                'user_name' => $this->user->name,
+                'user_avatar' => $this->user->avatar,
+            ],
             'commission_percentage' => $this->commission_percentage,
             'price_pay_hui' => $this->price_pay_hui,
             'total_auction' => $this->total_auction,

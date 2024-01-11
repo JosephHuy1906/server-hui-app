@@ -7,6 +7,7 @@ use App\Models\AuctionHuiRoom;
 use App\Models\Room;
 use App\Models\RoomUser;
 use App\Models\User;
+use Berkayk\OneSignal\OneSignalFacade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -57,6 +58,7 @@ class RoomController extends Controller
 
             if (!$check_day) {
                 $noti->postNotification($item, 'user', 'Nhóm còn một ngày nữa sẽ giải tán', $userId);
+                OneSignalFacade::sendNotificationToUser('Nhóm còn một ngày nữa sẽ giải tán', $userId);
             }
 
             return $response->successResponse('Get room by User success', RoomResource::collection($userRooms), 200);
@@ -204,6 +206,11 @@ class RoomController extends Controller
                     $usersInRoom = $room->users;
                     foreach ($usersInRoom as $user) {
                         $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi', $room->id);
+                        OneSignalFacade::sendNotificationToUser(
+                            'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi',
+                            $user->id,
+                            ['room_id' => $room->id, 'title' => $room->title]
+                        );
                     }
                 }
             }

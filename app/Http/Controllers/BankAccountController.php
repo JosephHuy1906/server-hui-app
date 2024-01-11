@@ -31,7 +31,7 @@ class BankAccountController extends Controller
                 return $response->errorResponse('Tài khoản người dùng không đúng', null, 404);
             }
             $addBank = BankAccount::create($request->all());
-            return $response->successResponse("Thêm tài khoản ngân hàng thành công", BankAccounResource::collection($addBank), 201);
+            return $response->successResponse("Thêm tài khoản ngân hàng thành công", new BankAccounResource($addBank), 201);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }

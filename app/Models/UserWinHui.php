@@ -14,6 +14,10 @@ class UserWinHui extends Model
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     protected $fillable = [
         'id',
         'user_id',

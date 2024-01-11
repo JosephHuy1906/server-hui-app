@@ -6,6 +6,7 @@ use App\Http\Resources\CheckoutResource;
 use App\Models\Checkout;
 use App\Models\User;
 use App\Models\UserWinHui;
+use Berkayk\OneSignal\OneSignalFacade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -29,6 +30,11 @@ class CheckoutController extends Controller
                 $totalAmountPayable = number_format($find->total_amount_payable, 0, ',', '.');
                 $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $totalAmountPayable . 'đ', $find->room_id);
                 $notication->postNotification($find->user_id, 'admin', 'User ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ', $find->room_id);
+               
+                OneSignalFacade::sendNotificationToUser(
+                    'User ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ',
+                    $find->user_id
+                );
             }
             if (!$find) {
                 $totalAmountPayable = number_format($checkout->price, 0, ',', '.');

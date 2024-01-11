@@ -169,6 +169,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+        Berkayk\OneSignal\OneSignalServiceProvider::class
     ])->toArray(),
 
     /*
@@ -184,6 +185,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class
     ])->toArray(),
 
 ];
