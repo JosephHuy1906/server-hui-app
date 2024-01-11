@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\RoomResource;
 use App\Models\AuctionHuiRoom;
 use App\Models\Room;
+use App\Models\RoomUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,23 +17,26 @@ class RoomController extends Controller
     {
         try {
             $response = new ResponseController();
-            $rooms = Room::withCount('users')
-                ->with(['users'])
-                ->where('status', 'Open')
+
+            $this->checkAndUpdateRoomsStatus();
+            $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->get();
+
+
+
             return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
     }
-
     public function getRoomsByUserId($userId, $item)
     {
         try {
             $response = new ResponseController();
             $noti = new NotificationController();
             $us = User::find($userId);
+            $this->checkAndUpdateRoomsStatus();
             if (!$us) {
                 return $response->errorResponse('User không tồn tại', null, 404);
             }
@@ -54,6 +58,7 @@ class RoomController extends Controller
             if (!$check_day) {
                 $noti->postNotification($item, 'user', 'Nhóm còn một ngày nữa sẽ giải tán', $userId);
             }
+
             return $response->successResponse('Get room by User success', RoomResource::collection($userRooms), 200);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
@@ -141,7 +146,7 @@ class RoomController extends Controller
             $data = $request->all();
             $find->update($data);
             $updatedRoom = Room::find($id);
-            return $response->successResponse('Update info room success', new RoomResource($updatedRoom), 201);
+            return $response->successResponse('Cập nhập chi tiết phòng thành công', new RoomResource($updatedRoom), 201);
         } catch (\Throwable $err) {
             return $response->errorResponse('Update info room faill', $err->getMessage(), 500);
         }
@@ -151,6 +156,7 @@ class RoomController extends Controller
     {
         try {
             $response = new ResponseController();
+            $this->checkAndUpdateRoomsStatus();
             $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->orderBy('users_count', 'desc')
@@ -168,6 +174,7 @@ class RoomController extends Controller
                 ->take($item)
                 ->orderBy('price_room', 'asc')
                 ->get();
+            $this->checkAndUpdateRoomsStatus();
             return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
@@ -178,7 +185,30 @@ class RoomController extends Controller
         try {
             $response = new ResponseController();
             $data = Room::withCount('users')->with(['users'])->findOrFail($id);
+            $this->checkAndUpdateRoomsStatus();
             return $response->successResponse('Get Detail room', new RoomResource($data), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+
+    protected function checkAndUpdateRoomsStatus()
+    {
+        try {
+            $response = new ResponseController();
+            $notication = new NotificationController();
+            $rooms = Room::withCount('users')->get();
+            foreach ($rooms as $room) {
+                if ($room->total_user == ($room->users_count - 1) && $room->status === 'Open') {
+                    $room->update(['status' => 'Lock']);
+                    $usersInRoom = $room->users;
+                    foreach ($usersInRoom as $user) {
+                        $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi', $room->id);
+                    }
+                }
+            }
+
+            return $response->successResponse('Check and update room status success', null, 200);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }
