@@ -22,7 +22,10 @@ class CheckoutResource extends JsonResource
                 'user_avatar' => $this->user->avatar
             ],
             'price' => $this->price,
-            'room' =>  $this->room_id,
+            'room' =>  [
+                'room_id' => $this->room_id,
+                'room_name' => $this->room->title
+            ],
             'description' => $this->description,
             'status' => $this->status,
             'user_win_hui' =>  $this->user_win_hui_id,

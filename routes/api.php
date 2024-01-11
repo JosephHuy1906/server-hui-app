@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuctionHuiDetailController;
 use App\Http\Controllers\AuctionHuiRoomController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
@@ -51,9 +52,14 @@ Route::get('user/total-price/{id}', [UserWinHuiController::class, 'calculateTota
 
 Route::get('checkout', [CheckoutController::class, 'getAll']);
 Route::post('checkout', [CheckoutController::class, 'checkout']);
+Route::get('checkout/user/{id}', [CheckoutController::class, 'getByUser']);
 Route::post('create-payment-link', [CheckoutController::class, 'createPaymentLink']);
 Route::get('payment-info/{id}', [CheckoutController::class, 'getPaymentLinkInfoOfOrder']);
 Route::get('payment-cancel/{id}', [CheckoutController::class, 'cancelPaymentLinkOfOrder']);
+
+Route::get('bank/user/{id}', [BankAccountController::class, 'getBankByUser']);
+Route::post('addbank', [BankAccountController::class, 'addBank']);
+
 
 
 Route::group([

@@ -21,9 +21,9 @@ class BankAccounResource extends JsonResource
                 'user_name' => $this->user->name,
                 'user_avatar' => $this->user->avatar
             ],
-            'number_bank' => $this->price,
-            'code' =>  $this->room_id,
-            'short_name' => $this->description,
+            'number_bank' => $this->number_bank,
+            'code' =>  $this->code,
+            'short_name' => $this->short_name,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CheckoutResource;
 use App\Models\Checkout;
+use App\Models\User;
 use App\Models\UserWinHui;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -233,6 +234,20 @@ class CheckoutController extends Controller
             $data = Checkout::all();
 
             return $response->successResponse('Tất cả Danh sách checkout thành công', CheckoutResource::collection($data), 200);
+        } catch (\Throwable $th) {
+            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+        }
+    }
+    public function getByUser($userId)
+    {
+        try {
+            $response = new ResponseController();
+            $user = User::find($userId);
+            if (!$user) {
+                return $response->errorResponse('Tài khoản người dùng không đúng', null, 404);
+            }
+            $data = Checkout::where('user_id', $userId)->get();
+            return $response->successResponse('Lấy danh sách checkout theo user thành công', CheckoutResource::collection($data), 200);
         } catch (\Throwable $th) {
             return $response->errorResponse("Server Error", $th->getMessage(), 500);
         }

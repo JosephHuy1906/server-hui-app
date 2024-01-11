@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('rank_user', function (Blueprint $table) {
             $table->id();
+            $table->integer('points');
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->enum('rank', ['Thành viên mới', 'Thành viên Bạc', 'Thành viên Vàng', 'Thành viên Kim Cương']);
             $table->timestamps();
         });
     }
