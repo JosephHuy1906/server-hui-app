@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\RoomResource;
 use App\Models\AuctionHuiRoom;
 use App\Models\Room;
-use App\Models\RoomUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -90,6 +89,61 @@ class RoomController extends Controller
             return $response->successResponse('Create room success', new RoomResource($addroom), 201);
         } catch (\Throwable $err) {
             return $response->errorResponse('Create room faill', $err->getMessage(), 500);
+        }
+    }
+
+    public function updateStatusRoom(Request $request)
+    {
+        try {
+            $response = new ResponseController();
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'id' => 'required',
+                    'status' => 'required'
+                ]
+            );
+
+            if ($validate->fails()) {
+                return $response->errorResponse('Input error value', $validate->errors(), 400);
+            }
+            $find = Room::find($request->id);
+            if (!$find)  return $response->errorResponse("Room does not exist", null, 404);
+            $update = $find->update([
+                'status' => $request->status
+            ]);
+            return $response->successResponse('Update status room success', null, 201);
+        } catch (\Throwable $err) {
+            return $response->errorResponse('Update status room faill', $err->getMessage(), 500);
+        }
+    }
+    public function updateInfoRoom(Request $request, $id)
+    {
+        try {
+            $response = new ResponseController();
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'title' => 'sometimes|required',
+                    'price_room' => 'sometimes|required',
+                    'commission_percentage' => 'sometimes|required',
+                    'payment_time' => 'sometimes|required',
+                    'date_room_end' => 'sometimes|required',
+                    'total_user' => 'sometimes|required',
+                ]
+            );
+            if ($validate->fails()) {
+                return $response->errorResponse('Input error value', $validate->errors(), 400);
+            }
+            $find = Room::find($id);
+            if (!$find)  return $response->errorResponse("Room does not exist", null, 404);
+
+            $data = $request->all();
+            $find->update($data);
+            $updatedRoom = Room::find($id);
+            return $response->successResponse('Update info room success', new RoomResource($updatedRoom), 201);
+        } catch (\Throwable $err) {
+            return $response->errorResponse('Update info room faill', $err->getMessage(), 500);
         }
     }
 

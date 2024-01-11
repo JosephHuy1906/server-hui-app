@@ -32,32 +32,51 @@ class RoomUserController extends Controller
                 ->first();
 
             $user = User::find($request->user_id);
-            
+
             if (!$user) {
                 return $response->errorResponse('User_id does not exist', null, 400);
             }
             $room = Room::find($request->room_id);
+
             if (!$room) {
                 return $response->errorResponse('room_id does not exist', null, 400);
             }
 
-            if ($existingRecord) {
-                DB::table('room_user')
+            if ($room->status == 'Open') {
+                if ($existingRecord) {
+                    DB::table('room_user')
+                        ->where('room_id', $request->room_id)
+                        ->where('user_id', $request->user_id)
+                        ->delete();
+
+                    $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi', $request->room_id);
+                    return $response->successResponse('Remove User for room successfully', null, 201);
+                } else {
+                    DB::table('room_user')->insert([
+                        'room_id' => $request->room_id,
+                        'user_id' => $request->user_id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    $noti->postNotification($request->user_id, 'user', 'Bạn đã tham gia vào phòng hụi thành công', $request->room_id);
+                    return $response->successResponse('Add User for room successfully', null, 201);
+                }
+            }
+
+            if ($room->status == 'Lock') {
+                $room_user =  DB::table('room_user')
                     ->where('room_id', $request->room_id)
                     ->where('user_id', $request->user_id)
-                    ->delete();
+                    ->first();
 
-                $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi', $request->room_id);
-                return $response->successResponse('Remove User for room successfully', null, 201);
-            } else {
-                DB::table('room_user')->insert([
-                    'room_id' => $request->room_id,
-                    'user_id' => $request->user_id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                $noti->postNotification($request->user_id, 'user', 'Bạn đã tham gia vào phòng hụi thành công', $request->room_id);
-                return $response->successResponse('Add User for room successfully', null, 201);
+                if (!$room_user) {
+                    return $response->errorResponse('Phòng hiện tại đã bị khoá', null, 400);
+                }
+
+                return $response->successResponse('Bạn đã vào phòng thành công', null, 201);
+            }
+            if ($room->status == 'Close') {
+                return $response->errorResponse('Phòng này hiện đã đóng và không còn hoạt động', null, 400);
             }
         } catch (\Throwable $err) {
             return $response->errorResponse("Server Error", $err->getMessage(), 500);

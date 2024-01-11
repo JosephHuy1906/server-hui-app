@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('room_id')->constrained();
+            $table->foreignId('room_id')->references('id')->on('rooms')->constrained();
             $table->timestamps();
         });
     }
