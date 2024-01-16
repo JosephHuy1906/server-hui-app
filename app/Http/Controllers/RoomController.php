@@ -207,9 +207,8 @@ class RoomController extends Controller
                     foreach ($usersInRoom as $user) {
                         $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi', $room->id);
                         OneSignalFacade::sendNotificationToUser(
-                            'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi',
+                            'Phòng hụi đã đủ người và đã bắt đầu chơi',
                             $user->id,
-                            ['room_id' => $room->id, 'title' => $room->title]
                         );
                     }
                 }
