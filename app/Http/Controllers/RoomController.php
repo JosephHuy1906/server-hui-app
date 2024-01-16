@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RoomResource;
-use App\Models\AuctionHuiRoom;
 use App\Models\Room;
-use App\Models\RoomUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +14,6 @@ class RoomController extends Controller
     public function getAllRoomsWithUsers($item)
     {
         try {
-            $response = new ResponseController();
 
             $this->checkAndUpdateRoomsStatus();
             $rooms = Room::withCount('users')->with(['users'])
@@ -25,20 +22,19 @@ class RoomController extends Controller
 
 
 
-            return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
+            return $this->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
     public function getRoomsByUserId($userId, $item)
     {
         try {
-            $response = new ResponseController();
             $noti = new NotificationController();
             $us = User::find($userId);
             $this->checkAndUpdateRoomsStatus();
             if (!$us) {
-                return $response->errorResponse('User không tồn tại', null, 404);
+                return $this->errorResponse('User không tồn tại',  404);
             }
             $userRooms = Room::whereHas('users', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
@@ -59,16 +55,15 @@ class RoomController extends Controller
                 $noti->postNotification($item, 'user', 'Nhóm còn một ngày nữa sẽ giải tán', $userId);
             }
 
-            return $response->successResponse('Get room by User success', RoomResource::collection($userRooms), 200);
+            return $this->successResponse('Get room by User success', RoomResource::collection($userRooms), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 
     public function addroom(Request $request)
     {
         try {
-            $response = new ResponseController();
             $admin = new RoomUserController();
             $validate = Validator::make(
                 $request->all(),
@@ -85,22 +80,21 @@ class RoomController extends Controller
             );
 
             if ($validate->fails()) {
-                return $response->errorResponse('Input error value', $validate->errors(), 400);
+                return $this->errorResponse('Input error value',  400);
             }
 
             $addroom = Room::create($request->all());
             $room_id = $addroom->id;
             $admin->addAdminForRoom($room_id, '4bdc395e-77d4-4602-8e0f-af6bb401560f');
-            return $response->successResponse('Create room success', new RoomResource($addroom), 201);
+            return $this->successResponse('Create room success', new RoomResource($addroom), 201);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Create room faill', $err->getMessage(), 500);
+            return $this->errorResponse('Create room faill',  500);
         }
     }
 
     public function updateStatusRoom(Request $request)
     {
         try {
-            $response = new ResponseController();
             $validate = Validator::make(
                 $request->all(),
                 [
@@ -110,22 +104,21 @@ class RoomController extends Controller
             );
 
             if ($validate->fails()) {
-                return $response->errorResponse('Input error value', $validate->errors(), 400);
+                return $this->errorResponse('Input error value',  400);
             }
             $find = Room::find($request->id);
-            if (!$find)  return $response->errorResponse("Room does not exist", null, 404);
+            if (!$find)  return $this->errorResponse("Room does not exist",  404);
             $update = $find->update([
                 'status' => $request->status
             ]);
-            return $response->successResponse('Update status room success', null, 201);
+            return $this->successResponse('Update status room success', null, 201);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Update status room faill', $err->getMessage(), 500);
+            return $this->errorResponse('Update status room faill',  500);
         }
     }
     public function updateInfoRoom(Request $request, $id)
     {
         try {
-            $response = new ResponseController();
             $validate = Validator::make(
                 $request->all(),
                 [
@@ -138,64 +131,60 @@ class RoomController extends Controller
                 ]
             );
             if ($validate->fails()) {
-                return $response->errorResponse('Input error value', $validate->errors(), 400);
+                return $this->errorResponse('Input error value',  400);
             }
             $find = Room::find($id);
-            if (!$find)  return $response->errorResponse("Room does not exist", null, 404);
+            if (!$find)  return $this->errorResponse("Room does not exist",  404);
 
             $data = $request->all();
             $find->update($data);
             $updatedRoom = Room::find($id);
-            return $response->successResponse('Cập nhập chi tiết phòng thành công', new RoomResource($updatedRoom), 201);
+            return $this->successResponse('Cập nhập chi tiết phòng thành công', new RoomResource($updatedRoom), 201);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Update info room faill', $err->getMessage(), 500);
+            return $this->errorResponse('Update info room faill',  500);
         }
     }
 
     public function getRoomsByCount($item)
     {
         try {
-            $response = new ResponseController();
             $this->checkAndUpdateRoomsStatus();
             $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->orderBy('users_count', 'desc')
                 ->get();
-            return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
+            return $this->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
     public function getRoomsByPrice($item)
     {
         try {
-            $response = new ResponseController();
             $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->orderBy('price_room', 'asc')
                 ->get();
             $this->checkAndUpdateRoomsStatus();
-            return $response->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
+            return $this->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
     public function getDetailRoom($id)
     {
         try {
-            $response = new ResponseController();
             $data = Room::withCount('users')->with(['users'])->findOrFail($id);
             $this->checkAndUpdateRoomsStatus();
-            return $response->successResponse('Get Detail room', new RoomResource($data), 200);
+            return $this->successResponse('Get Detail room', new RoomResource($data), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 
     protected function checkAndUpdateRoomsStatus()
     {
         try {
-            $response = new ResponseController();
             $notication = new NotificationController();
             $rooms = Room::withCount('users')->get();
             foreach ($rooms as $room) {
@@ -208,9 +197,9 @@ class RoomController extends Controller
                 }
             }
 
-            return $response->successResponse('Check and update room status success', null, 200);
+            return $this->successResponse('Check and update room status success', null, 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 }

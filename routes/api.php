@@ -16,7 +16,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
 Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
@@ -61,19 +63,17 @@ Route::get('bank/user/{id}', [BankAccountController::class, 'getBankByUser']);
 Route::post('addbank', [BankAccountController::class, 'addBank']);
 
 
+Route::post('login', [AuthController::class, 'login']);
+Route::post('/signup', [AuthController::class, 'signup']);
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'auth'
-], function ($router) {
-    Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::post('login', [AuthController::class, 'login']);
+
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('profile', [AuthController::class, 'profile']);
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('/signup', [AuthController::class, 'signup']);
     Route::post('/update-avatar/{id}', [UserController::class, 'updateAvatar']);
     Route::post('/update-password/{user}', [UserController::class, 'updatePassword']);
     Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
-    Route::get('users/', [UserController::class, 'getAllUser']);
+    Route::get('users', [UserController::class, 'getAllUser']);
 });
