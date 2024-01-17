@@ -19,9 +19,6 @@ class RoomController extends Controller
             $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->get();
-
-
-
             return $this->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
@@ -80,7 +77,7 @@ class RoomController extends Controller
             );
 
             if ($validate->fails()) {
-                return $this->errorResponse('Input error value',  400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
 
             $addroom = Room::create($request->all());
@@ -104,10 +101,10 @@ class RoomController extends Controller
             );
 
             if ($validate->fails()) {
-                return $this->errorResponse('Input error value',  400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
             $find = Room::find($request->id);
-            if (!$find)  return $this->errorResponse("Room does not exist",  404);
+            if (!$find)  return $this->errorResponse("Room không tồn tại",  404);
             $update = $find->update([
                 'status' => $request->status
             ]);
@@ -131,10 +128,10 @@ class RoomController extends Controller
                 ]
             );
             if ($validate->fails()) {
-                return $this->errorResponse('Input error value',  400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
             $find = Room::find($id);
-            if (!$find)  return $this->errorResponse("Room does not exist",  404);
+            if (!$find)  return $this->errorResponse("Room không tồn tại",  404);
 
             $data = $request->all();
             $find->update($data);

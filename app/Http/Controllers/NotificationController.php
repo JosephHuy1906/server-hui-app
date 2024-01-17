@@ -13,11 +13,11 @@ class NotificationController extends Controller
     public function getNotiByUser($id)
     {
         try {
-            $response = new ResponseController();
+
             $user = User::find($id);
 
             if (!$user) {
-                return $response->errorResponse('Người dùng không tồn tại', null, 404);
+                return $this->errorResponse('Người dùng không tồn tại',  404);
             }
 
             $notifications = Notification::where('user_id', $id)
@@ -26,43 +26,37 @@ class NotificationController extends Controller
                 ->get();
 
             if ($notifications->isEmpty()) {
-                return $response->successResponse('Bạn chưa có thông báo nào', [], 200);
+                return $this->successResponse('Bạn chưa có thông báo nào', [], 200);
             }
 
-            return $response->successResponse('Danh sách thông báo', $notifications, 200);
+            return $this->successResponse('Danh sách thông báo', $notifications, 200);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Error Server', $err->getMessage(), 500);
+            return $this->errorResponse('Error Server', 500);
         }
     }
     public function getNotiByAdmin($id)
     {
         try {
-            $response = new ResponseController();
             $user = User::find($id);
-
             if (!$user) {
-                return $response->errorResponse('Người dùng không tồn tại', null, 404);
+                return $this->errorResponse('Người dùng không tồn tại',  404);
             }
-
             $notifications = Notification::where('user_id', $id)
                 ->where('status', 'admin')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
             if ($notifications->isEmpty()) {
-                return $response->successResponse('Admin chưa có thông báo nào', [], 200);
+                return $this->successResponse('Admin chưa có thông báo nào', [], 200);
             }
-
-            return $response->successResponse('Danh sách thông báo', $notifications, 200);
+            return $this->successResponse('Danh sách thông báo', $notifications, 200);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Error Server', $err->getMessage(), 500);
+            return $this->errorResponse('Error Server',  500);
         }
     }
     public function postNotification($user_id, $status, $description, $room_id)
     {
         try {
-            $response = new ResponseController();
-
             $data = [
                 'user_id' => $user_id,
                 'status' => $status,
@@ -71,15 +65,14 @@ class NotificationController extends Controller
             ];
             $notifications = Notification::create($data);
 
-            return $response->successResponse('Create notification success', $notifications, 200);
+            return $this->successResponse('Create notification success', $notifications, 200);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Error Server', $err->getMessage(), 500);
+            return $this->errorResponse('Error Server',  500);
         }
     }
     public function sendNotification(Request $request)
     {
         try {
-            $response = new ResponseController();
             $validator = Validator::make($request->all(), [
                 'status' => 'required',
                 'user_id' => 'required',
@@ -89,29 +82,26 @@ class NotificationController extends Controller
 
             $notifications = Notification::create($request->all());
             if ($validator->fails()) {
-                return $response->errorResponse('Input value error', $validator->errors(), 400);
+                return $this->errorResponse('Input value error',  400);
             }
-            return $response->successResponse('Post notification success', new NotificationResource($notifications), 200);
+            return $this->successResponse('Post notification success', new NotificationResource($notifications), 200);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Error Server', $err->getMessage(), 500);
+            return $this->errorResponse('Error Server',  500);
         }
     }
 
     public function removeNotiByUser($id)
     {
         try {
-            $response = new ResponseController();
             $noti = Notification::find($id);
-
             if (!$noti) {
-                return $response->errorResponse('Thông báo không tồn tại không tồn tại', null, 404);
+                return $this->errorResponse('Thông báo không tồn tại không tồn tại',  404);
             }
 
             $noti->delete();
-
-            return $response->successResponse('Đã xoá thông báo', null, 201);
+            return $this->successResponse('Đã xoá thông báo', null, 201);
         } catch (\Throwable $err) {
-            return $response->errorResponse('Error Server', $err->getMessage(), 500);
+            return $this->errorResponse('Error Server',  500);
         }
     }
 }

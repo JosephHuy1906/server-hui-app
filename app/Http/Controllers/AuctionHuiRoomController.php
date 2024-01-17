@@ -15,7 +15,7 @@ class AuctionHuiRoomController extends Controller
     public function createAuctionHui(Request $request)
     {
         try {
-            $response = new ResponseController();
+
             $valida = Validator::make(
                 $request->all(),
                 [
@@ -26,17 +26,17 @@ class AuctionHuiRoomController extends Controller
             );
 
             if ($valida->fails()) {
-                return $response->errorResponse("Input does not exist", null, 400);
+                return $this->errorResponse("Thông tin truyền vào chưa đúng",  400);
             }
             $room = Room::find($request->room_id);
             if (!$room) {
-                return $this->errorResponse('room not found', null, 404);
+                return $this->errorResponse('room not found',  404);
             }
 
             $auction = AuctionHuiRoom::create($request->all());
-            return $response->successResponse("Phòng đấu giá hui đã tạo", new AuctionHuiRoomResource($auction), 201);
+            return $this->successResponse("Phòng đấu giá hui đã tạo", new AuctionHuiRoomResource($auction), 201);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 
@@ -44,13 +44,13 @@ class AuctionHuiRoomController extends Controller
     public function removeAuctionHui($id)
     {
         try {
-            $response = new ResponseController();
+
             AuctionHuiDetail::where('auction_hui_id', $id)->delete();
             AuctionHuiRoom::where('id', $id)->delete();
 
-            return $response->successResponse("Xoá phòng đấu giá hui thành công", null, 201);
+            return $this->successResponse("Xoá phòng đấu giá hui thành công", null, 201);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 }

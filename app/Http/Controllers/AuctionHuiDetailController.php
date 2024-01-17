@@ -15,7 +15,7 @@ class AuctionHuiDetailController extends Controller
     public function auctionHui(Request $request)
     {
         try {
-            $response = new ResponseController();
+            
             $noti = new NotificationController();
             $validator = Validator::make($request->all(), [
                 'auction_hui_id' => 'required',
@@ -26,31 +26,31 @@ class AuctionHuiDetailController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return $response->errorResponse('Input value error', $validator->errors(), 400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
 
             $create = AuctionHuiDetail::create($request->all());
             $noti->postNotification($request->user_id, 'user', 'Bạn đã đấu giá hụi thành công', $request->room_id);
-            return $response->successResponse('Bạn đã đấu giá hụi thành công', new AuctionHuiDetailResource($create), 201);
+            return $this->successResponse('Bạn đã đấu giá hụi thành công', new AuctionHuiDetailResource($create), 201);
         } catch (\Throwable $err) {
-            return $response->errorResponse("Server Error", $err->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
     public function getAuctionHui($id)
     {
         try {
-            $response = new ResponseController();
+            
             $data = AuctionHuiDetail::where('auction_hui_id', $id)->get();
-            return $response->successResponse('Lấy danh sách đấu giá hụi theo phòng thành công', AuctionHuiDetailResource::collection($data), 200);
+            return $this->successResponse('Lấy danh sách đấu giá hụi theo phòng thành công', AuctionHuiDetailResource::collection($data), 200);
         } catch (\Throwable $err) {
-            return $response->errorResponse("Server Error", $err->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 
     public function getTotal($id)
     {
         try {
-            $response = new ResponseController();
+            
 
             $maxTotalPrice = AuctionHuiDetail::where('auction_hui_id', $id)
                 ->select(DB::raw('MAX(total_price) as max_total_price'))
@@ -61,15 +61,15 @@ class AuctionHuiDetailController extends Controller
                 ->where('total_price', $maxTotalPrice)
                 ->get();
 
-            return $response->successResponse('Người đấu giá hụi thành công', AuctionHuiDetailResource::collection($usersWithMaxTotalPrice), 200);
+            return $this->successResponse('Người đấu giá hụi thành công', AuctionHuiDetailResource::collection($usersWithMaxTotalPrice), 200);
         } catch (\Throwable $err) {
-            return $response->errorResponse("Server Error", $err->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
     public function postUserWin(Request $request)
     {
         try {
-            $response = new ResponseController();
+            
             $notication = new NotificationController();
             $validator = Validator::make($request->all(), [
                 'room_id' => 'required',
@@ -80,7 +80,7 @@ class AuctionHuiDetailController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return $response->errorResponse('Input value error', $validator->errors(), 400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
 
             $usersWithMaxTotalPrice = $this->getTotal($request->auction_hui_id);
@@ -88,7 +88,7 @@ class AuctionHuiDetailController extends Controller
             $responseData = $usersWithMaxTotalPrice->getData();
 
             if (!isset($responseData->status) || !isset($responseData->success) || $responseData->status != 200 || !$responseData->success) {
-                return $response->errorResponse('Failed to get winning bidder', null, 500);
+                return $this->errorResponse('Không tìm được người chiến thắng', 500);
             }
 
             $winningBidder = $responseData->data[0];
@@ -115,9 +115,9 @@ class AuctionHuiDetailController extends Controller
                 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
                 $request->room_id
             );
-            return $response->successResponse('Create user win hui successfully', new UserWinHuiResource($addUser), 201);
+            return $this->successResponse('Create user win hui successfully', new UserWinHuiResource($addUser), 201);
         } catch (\Throwable $err) {
-            return $response->errorResponse("Server Error", $err->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 }

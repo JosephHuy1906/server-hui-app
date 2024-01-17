@@ -11,44 +11,40 @@ class UserWinHuiController extends Controller
     public function updatePaid($id)
     {
         try {
-            $response = new ResponseController();
+
             $notication = new NotificationController();
             $find = UserWinHui::find($id);
-            if (!$find)  return $response->errorResponse("User Win id does not exist", null, 404);
+            if (!$find)  return $this->errorResponse("User chiến thắng không tồn tại",  404);
             $find->update([
                 'status' => 'approved'
             ]);
             $notication->postNotification($find->user_id, $find->role, 'Bạn đã thanh toán ' . $find->total_amount_payable . 'đ tiền đấu hụi', $find->room_id);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
     public function getHuiByUser($id)
     {
         try {
-            $response = new ResponseController();
+
 
             $data = UserWinHui::where('user_id', $id)->get();
 
-            return $response->successResponse('Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);
+            return $this->successResponse('Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
     public function calculateTotalAmountsByRoom($userId)
     {
-        $response = new ResponseController();
+
         $data = UserWinHui::where('user_id', $userId)->with('room')->get();
-
         if ($data->isEmpty()) {
-            return $response->errorResponse("User does not exist or has no associated data", null, 404);
+            return $this->errorResponse("User không tồn tại hoặc không có dữ liệu liên quan",  404);
         }
-
         $totals = [];
-
         foreach ($data as $item) {
             $roomId = $item->room_id;
-
             if (!isset($totals[$roomId])) {
                 $totals[$roomId] = [
                     'room_id' => $item->room_id,
@@ -66,18 +62,15 @@ class UserWinHuiController extends Controller
 
         $result = array_values($totals);
 
-        return $response->successResponse("Tổng tiền bạn đã thắng và bạn phải nộp trong các phòng", $result, 200);
+        return $this->successResponse("Tổng tiền bạn đã thắng và bạn phải nộp trong các phòng", $result, 200);
     }
     public function getAll()
     {
         try {
-            $response = new ResponseController();
-
             $data = UserWinHui::all();
-
-            return $response->successResponse('Tất cả  Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);
+            return $this->successResponse('Tất cả  Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 }

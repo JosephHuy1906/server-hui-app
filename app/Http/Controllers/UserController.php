@@ -26,12 +26,12 @@ class UserController extends Controller
             );
 
             if ($validateUser->fails()) {
-                return $this->errorResponse("Validation error", 400);
+                return $this->errorResponse("Thông tin truyền vào chưa đúng", 400);
             }
 
             $user = User::find($id);
             if (!$user) {
-                return $this->errorResponse('User not found',  404);
+                return $this->errorResponse('User không tồn tại',  404);
             }
 
             $cccdAfterPath = $image->uploadImage($request->file('cccd_after'), 'images/users');
@@ -61,7 +61,7 @@ class UserController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return $this->errorResponse('Validation error',  400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
 
             $data =  $user->password = Hash::make($request->password);
@@ -88,12 +88,12 @@ class UserController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return $this->errorResponse('Input error value',  400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
 
             $user = User::find($id);
             if (!$user) {
-                return $this->errorResponse('User not found',  404);
+                return $this->errorResponse('User không tồn tại',  404);
             }
 
             $data = $request->all();
@@ -111,11 +111,11 @@ class UserController extends Controller
                 'avatar' => 'required|image|mimes:png,jpg,jpeg,gif|max:2048',
             ]);
             if ($validator->fails()) {
-                return $this->errorResponse('Input error value',  400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
             $user = User::find($id);
             if (!$user) {
-                return $this->errorResponse('User not found',  404);
+                return $this->errorResponse('User Không tồn tại',  404);
             }
             $oldAvatarPath = str_replace(url('/') . '/api/', '', $user->avatar);
             $avatar = $request->file('avatar');

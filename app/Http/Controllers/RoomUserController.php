@@ -21,7 +21,7 @@ class RoomUserController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return $this->errorResponse('Input value error', 400);
+                return $this->errorResponse('Thông tin truyền vào chưa đúng', 400);
             }
             $existingRecord = DB::table('room_user')
                 ->where('room_id', $request->room_id)
@@ -31,12 +31,12 @@ class RoomUserController extends Controller
             $user = User::find($request->user_id);
 
             if (!$user) {
-                return $this->errorResponse('User_id does not exist',  400);
+                return $this->errorResponse('User không tồn tại',  400);
             }
             $room = Room::find($request->room_id);
 
             if (!$room) {
-                return $this->errorResponse('room_id does not exist',  400);
+                return $this->errorResponse('room không tồn tại',  400);
             }
 
             if ($room->status == 'Open') {

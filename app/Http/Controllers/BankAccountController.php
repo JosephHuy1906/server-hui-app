@@ -13,7 +13,7 @@ class BankAccountController extends Controller
     public function addBank(Request $request)
     {
         try {
-            $response = new ResponseController();
+
             $validate = Validator::make(
                 $request->all(),
                 [
@@ -24,31 +24,31 @@ class BankAccountController extends Controller
                 ]
             );
             if ($validate->fails()) {
-                return $response->errorResponse('Bạn chưa điền đủ thông tin', $validate->errors(), 400);
+                return $this->errorResponse('Bạn chưa điền đủ thông tin',  400);
             }
             $user = User::find($request->user_id);
             if (!$user) {
-                return $response->errorResponse('Tài khoản người dùng không đúng', null, 404);
+                return $this->errorResponse('Tài khoản người dùng không đúng', 404);
             }
             $addBank = BankAccount::create($request->all());
-            return $response->successResponse("Thêm tài khoản ngân hàng thành công", BankAccounResource::collection($addBank), 201);
+            return $this->successResponse("Thêm tài khoản ngân hàng thành công", BankAccounResource::collection($addBank), 201);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 
     public function getBankByUser($userId)
     {
         try {
-            $response = new ResponseController();
+
             $user = User::find($userId);
             if (!$user) {
-                return $response->errorResponse('Tài khoản người dùng không đúng', null, 404);
+                return $this->errorResponse('Tài khoản người dùng không đúng',  404);
             }
             $data = BankAccount::where('user_id', $userId)->get();
-            return $response->successResponse("Lấy bank theo user thành công", BankAccounResource::collection($data), 200);
+            return $this->successResponse("Lấy bank theo user thành công", BankAccounResource::collection($data), 200);
         } catch (\Throwable $th) {
-            return $response->errorResponse("Server Error", $th->getMessage(), 500);
+            return $this->errorResponse("Server Error",  500);
         }
     }
 }
