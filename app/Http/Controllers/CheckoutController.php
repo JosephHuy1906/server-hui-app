@@ -15,9 +15,11 @@ class CheckoutController extends Controller
     public function updateStatus($id)
     {
         try {
-
             $checkout = Checkout::find($id);
             $notication = new NotificationController();
+            if ($checkout->status === 'approved') {
+                return;
+            }
             $checkout->update([
                 'status' => 'approved'
             ]);
@@ -55,6 +57,9 @@ class CheckoutController extends Controller
 
             $checkout = Checkout::find($id);
             $notication = new NotificationController();
+            if ($checkout->status === 'rejected') {
+                return;
+            }
             $checkout->update([
                 'status' => 'rejected'
             ]);
@@ -108,7 +113,7 @@ class CheckoutController extends Controller
                 'description' => 'required',
                 'user_id' => 'required',
                 'room_id' => 'required',
-                'user_win_hui_id' => 'required'
+                'user_win_hui_id' => 'sometimes'
             ]);
             if ($validator->fails()) {
                 return $this->errorResponse('Thông tin truyền vào chưa đúng', 400);

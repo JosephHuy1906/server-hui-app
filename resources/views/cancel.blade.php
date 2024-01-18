@@ -1,11 +1,17 @@
 <?php
 use App\Http\Controllers\CheckoutController;
+define('FONTAWESOME_CSS', '../View/fontawesome-free-6.1.1-web/css/all.min.css');
 
-$checkout = new CheckoutController();
-$orderCode = $_GET['orderCode'];
+$orderCode = isset($_GET['orderCode']) ? htmlspecialchars($_GET['orderCode']) : null;
 
-$checkout->updateStatusReject($orderCode);
+if (!empty($orderCode)) {
+    $checkout = new CheckoutController();
+    $isUpdated = $checkout->updateStatusReject($orderCode);
 
+    if ($isUpdated) {
+        return;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +22,6 @@ $checkout->updateStatusReject($orderCode);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh toán thất bại</title>
-    <link rel="stylesheet" href="../View/fontawesome-free-6.1.1-web/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -114,6 +119,7 @@ $checkout->updateStatusReject($orderCode);
             font-size: 1.3em;
         }
     </style>
+
 </head>
 
 <body>
