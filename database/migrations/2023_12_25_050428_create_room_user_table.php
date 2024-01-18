@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('room_user', function (Blueprint $table) {
             $table->id();
             $table->uuid('user_id');
+            $table->enum('status', ['Đang hoạt động', 'Đã bị khoá'])->default('Đang hoạt động');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('room_id')->references('id')->on('rooms')->constrained();
             $table->timestamps();

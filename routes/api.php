@@ -26,6 +26,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('/signup', [AuthController::class, 'signup']);
 
+Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
+Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('profile', [AuthController::class, 'profile']);
@@ -36,8 +38,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
     Route::get('users', [UserController::class, 'getAllUser']);
 
-    Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
-    Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
 
     Route::get('room/user/{userId}/{item}', [RoomController::class, 'getRoomsByUserId']);
     Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);
