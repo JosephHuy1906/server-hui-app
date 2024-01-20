@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id();
+            $table->string('id')->primary();
             $table->foreignId('room_user_id')->references("id")->on("room_user")->constrained();
-            $table->enum('status', ['Chưa thanh toán', 'Đã thanh toán'])->default('Chưa thanh toán');
+            $table->foreignId('room_id')->references("id")->on("rooms")->constrained();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('description');
             $table->integer('price_pay');
             $table->timestamps();

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RoomResource;
+use App\Models\Payment;
 use App\Models\Room;
+use App\Models\RoomUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -88,6 +90,9 @@ class RoomController extends Controller
             return $this->errorResponse('Create room faill',  500);
         }
     }
+
+
+
 
     public function updateStatusRoom(Request $request)
     {

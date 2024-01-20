@@ -72,6 +72,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('checkout', [CheckoutController::class, 'checkout']);
     Route::get('checkout/user/{id}', [CheckoutController::class, 'getByUser']);
     Route::post('create-payment-link', [CheckoutController::class, 'createPaymentLink']);
+    Route::post('create-payment-room-link', [CheckoutController::class, 'createPaymenRoomUsertLink']);
     Route::get('payment-info/{id}', [CheckoutController::class, 'getPaymentLinkInfoOfOrder']);
     Route::get('payment-cancel/{id}', [CheckoutController::class, 'cancelPaymentLinkOfOrder']);
 

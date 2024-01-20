@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
                     ->get();
                 foreach ($userList as $us) {
                     $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title, $room->id);
-                    $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
+                    // $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
                 }
             }
         })->everyMinute()->name('end_day_payment')->withoutOverlapping();
@@ -48,7 +48,7 @@ class Kernel extends ConsoleKernel
                     ->get();
                 foreach ($userList as $us) {
                     $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title, $room->id);
-                    $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
+                    // $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
                 }
             }
         })->monthlyOn(28, '18:00')->name('end_of_month_payment')->withoutOverlapping();

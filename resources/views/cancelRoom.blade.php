@@ -3,7 +3,6 @@ define('FONTAWESOME_CSS', '../View/fontawesome-free-6.1.1-web/css/all.min.css');
 
 $orderCode = isset($_GET['orderCode']) ? htmlspecialchars($_GET['orderCode']) : null;
 
-
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +12,7 @@ $orderCode = isset($_GET['orderCode']) ? htmlspecialchars($_GET['orderCode']) : 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh toán thất bại</title>
+    <title>Thanh toán tiền hụi</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -121,7 +120,7 @@ $orderCode = isset($_GET['orderCode']) ? htmlspecialchars($_GET['orderCode']) : 
         <div class="modal">
             <div class="modal__message">
                 <img src="./icon-cancel.png" class="success" />
-                <h2 class="modal__title">Bạn đã huỷ thanh toán!</h2>
+                <h2 class="modal__title">Bạn đã huỷ thanh toán tiền hụi!</h2>
                 <p class="modal__desc">
                     Bạn đã huỷ hoá đơn thanh toán với mã hoá đơn <b>#<?php echo $orderCode; ?></b>, vui lòng quay lại app!</p>
                 <div class="modal__footer">

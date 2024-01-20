@@ -11,9 +11,11 @@ class Payment extends Model
 
 
     protected $fillable = [
+        'id',
         'room_user_id',
         'status',
         'description',
-        'price_pay'
+        'price_pay',
+        'room_id'
     ];
 }

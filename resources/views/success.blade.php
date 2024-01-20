@@ -1,17 +1,8 @@
 <?php
-use App\Http\Controllers\CheckoutController;
+
 define('FONTAWESOME_CSS', '../View/fontawesome-free-6.1.1-web/css/all.min.css');
 
 $orderCode = isset($_GET['orderCode']) ? htmlspecialchars($_GET['orderCode']) : null;
-
-if (!empty($orderCode)) {
-    $checkout = new CheckoutController();
-    $isUpdated = $checkout->updateStatus($orderCode);
-
-    if ($isUpdated) {
-        return;
-    }
-}
 ?>
 
 <!DOCTYPE html>
