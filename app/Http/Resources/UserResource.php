@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'sex' => $this->sex,
             'birthday' => $this->birthday,
             'role' => $this->role,
+            'rank' => $this->rank,
             'cccd_after' => $this->cccd_after,
             'cccd_before' => $this->cccd_before,
             'email_verified_at' => $this->email_verified_at,

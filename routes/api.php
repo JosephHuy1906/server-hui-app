@@ -37,11 +37,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
     Route::get('users', [UserController::class, 'getAllUser']);
+    Route::post('user/update-rank/{id}', [UserController::class, 'updateRank']);
 
 
     Route::get('room/user/{userId}/{item}', [RoomController::class, 'getRoomsByUserId']);
     Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);
     Route::post('room/actionroom', [RoomUserController::class, 'addUserForRoom']);
+    Route::get('look-user-in-room/{id}', [RoomUserController::class, 'updateStatusUser']);
     Route::post('room/addroom', [RoomController::class, 'addroom']);
     Route::get('room/detail/{id}', [RoomController::class, 'getDetailRoom']);
     Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);

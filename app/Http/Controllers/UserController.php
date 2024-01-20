@@ -42,7 +42,37 @@ class UserController extends Controller
                 'cccd_before' => $cccdBeforePath,
             ]);
 
-            return $this->successResponse("User update CCCD Successfully", new UserResource($user), 201);
+            return $this->successResponse("Cập nhập CCCD hoặc CMDD thành công", new UserResource($user), 201);
+        } catch (\Throwable $th) {
+            return $this->errorResponse("Server Error",  500);
+        }
+    }
+
+    public function updateRank(Request $request, $id)
+    {
+        try {
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'rank' => 'required',
+                ]
+            );
+
+            if ($validateUser->fails()) {
+                return $this->errorResponse("Thông tin truyền vào chưa đúng", 400);
+            }
+
+            $user = User::find($id);
+            if (!$user) {
+                return $this->errorResponse('User không tồn tại',  404);
+            }
+
+
+            $user->update([
+                'rank' => $request->rank,
+            ]);
+
+            return $this->successResponse("Cập nhập hạng thành viên thành công", new UserResource($user), 201);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
         }
@@ -69,7 +99,7 @@ class UserController extends Controller
                 'password' => $data
             ]);
 
-            return $this->successResponse('Password updated successfully', null, 200);
+            return $this->successResponse('Cập nhập lại password thành công', null, 200);
         } catch (\Throwable $th) {
             return $this->errorResponse('Server Error',  500);
         }
@@ -98,7 +128,7 @@ class UserController extends Controller
 
             $data = $request->all();
             $user->update($data);
-            return $this->successResponse('User update successfully', new UserResource($user), 201);
+            return $this->successResponse('Cập nhập thông tin thành công', new UserResource($user), 201);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
         }
@@ -129,7 +159,7 @@ class UserController extends Controller
             $user->update([
                 'avatar' => $baseUrl . '/api/' . $storagePath . '/' . $filename,
             ]);
-            return $this->successResponse('User update avatar successfully', new UserResource($user), 201);
+            return $this->successResponse('Cập nhập avatar thành công', new UserResource($user), 201);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
         }
