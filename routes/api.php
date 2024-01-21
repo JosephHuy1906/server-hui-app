@@ -73,6 +73,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('update-status-payment-user/{id}', [UserWinHuiController::class, 'updatePaidAdmin']);
     Route::get('auction-user-win', [UserWinHuiController::class, 'getAll']);
     Route::get('user/total-price/{id}', [UserWinHuiController::class, 'calculateTotalAmountsByRoom']);
+    Route::get('total-price-user/{id}', [UserWinHuiController::class, 'calculateTotalPriceByUser']);
 
     Route::get('checkout', [CheckoutController::class, 'getAll']);
     Route::post('checkout', [CheckoutController::class, 'checkout']);
