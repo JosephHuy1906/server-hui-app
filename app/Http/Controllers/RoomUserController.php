@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\RoomUser;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -111,5 +112,47 @@ class RoomUserController extends Controller
         ]);
         $noti->postNotification($room_user->user_id, "User", "Bạn đã bị khoá trong phòng hụi và không thể chơi", $room_user->room_id);
         return $this->successResponse("Khoá người dùng thành công", null, 201);
+    }
+
+    public function getUserRoomPayment($id)
+    {
+        $today = Carbon::now()->toDateString();
+        $usersInRoom = DB::table('room_user')
+            ->select('users.id as user_id', 'users.name', 'users.phone', 'users.avatar', 'users.email', 'users.birthday', 'users.sex', 'users.address', 'users.role', 'users.rank', 'room_user.status as user_status', 'payments.*')
+            ->join('users', 'room_user.user_id', '=', 'users.id')
+            ->leftJoin('payments', function ($join) use ($id, $today) {
+                $join->on('room_user.id', '=', 'payments.room_user_id')
+                    ->where('payments.created_at', '>=', $today . ' 00:00:00')
+                    ->where('payments.created_at', '<=', $today . ' 23:59:59');
+            })
+            ->where('room_user.room_id', $id)
+            ->where('room_user.user_id', '!=', '4bdc395e-77d4-4602-8e0f-af6bb401560f')
+            ->where('room_user.status', '!=', 'Đã bị khoá')
+            ->get();
+        $result = [];
+        foreach ($usersInRoom as $user) {
+            $userData = [
+                'id' => $user->user_id,
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'avatar' => $user->avatar,
+                'email' => $user->email,
+                'birthday' => $user->birthday,
+                'sex' => $user->sex,
+                'address' => $user->address,
+                'role' => $user->role,
+                'rank' => $user->rank,
+                'user_status' => $user->user_status,
+                'payment' => [
+                    'status' => $user->status,
+                    'description' => $user->description,
+                    'price_pay' => $user->price_pay,
+                    'created_at' => $user->created_at,
+                ],
+            ];
+            $result[] = $userData;
+        }
+
+        return $this->successResponse('kiểm tra user đã thanh toán tiền hụi theo phòng', $result, 200);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserWinHuiResource;
 use App\Models\UserWinHui;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserWinHuiController extends Controller
 {
@@ -18,7 +19,28 @@ class UserWinHuiController extends Controller
             $find->update([
                 'status' => 'approved'
             ]);
-            $notication->postNotification($find->user_id, $find->role, 'Bạn đã thanh toán ' . $find->total_amount_payable . 'đ tiền đấu hụi', $find->room_id);
+            $notication->postNotification($find->user_id, "User", 'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.', $find->room_id);
+        } catch (\Throwable $th) {
+            return $this->errorResponse("Server Error",  500);
+        }
+    }
+    public function updatePaidAdmin(Request $request, $id)
+    {
+        try {
+            $validate = Validator::make($request->all(), [
+                'status' => 'required',
+            ]);
+
+            if ($validate->fails()) {
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
+            }
+            $notication = new NotificationController();
+            $find = UserWinHui::find($id);
+            if (!$find)  return $this->errorResponse("User chiến thắng không tồn tại",  404);
+            $find->update([
+                'status' => $request->status
+            ]);
+            $notication->postNotification($find->user_id, "User", 'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.', $find->room_id);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
         }
@@ -26,8 +48,6 @@ class UserWinHuiController extends Controller
     public function getHuiByUser($id)
     {
         try {
-
-
             $data = UserWinHui::where('user_id', $id)->get();
 
             return $this->successResponse('Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);

@@ -21,12 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-
-
 Route::post('login', [AuthController::class, 'login']);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('send-mail', [UserController::class, 'checkMailAndSeid']);
 Route::post('forget-pass', [UserController::class, 'forgetPassword']);
+
 
 Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
 Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
@@ -52,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('rooms/price/{id}', [RoomController::class, 'getRoomsByPrice']);
     Route::post('room/update-status/', [RoomController::class, 'updateStatusRoom']);
     Route::post('room/update-info/{id}', [RoomController::class, 'updateInfoRoom']);
+    Route::get('check-user-payment/{id}', [RoomUserController::class, 'getUserRoomPayment']);
 
     Route::post('message/postMess', [MessageController::class, 'postMessage']);
     Route::get('message/room/{id}', [MessageController::class, 'getMessage']);
@@ -69,6 +69,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('post-user-win', [AuctionHuiDetailController::class, 'postUserWin']);
     Route::get('auction/user-win/{id}', [UserWinHuiController::class, 'getHuiByUser']);
     Route::get('auction/{id}', [UserWinHuiController::class, 'updatePaid']);
+    Route::post('update-status-payment-user/{id}', [UserWinHuiController::class, 'updatePaidAdmin']);
     Route::get('auction-user-win', [UserWinHuiController::class, 'getAll']);
     Route::get('user/total-price/{id}', [UserWinHuiController::class, 'calculateTotalAmountsByRoom']);
 
