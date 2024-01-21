@@ -70,7 +70,6 @@ class AuctionHuiDetailController extends Controller
             $validator = Validator::make($request->all(), [
                 'room_id' => 'required',
                 'auction_hui_id' => 'required',
-                'total_user' => 'required',
                 'accumulated_amount' => 'required',
                 'commission_percentage' => 'required',
             ]);

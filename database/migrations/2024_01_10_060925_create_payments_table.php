@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->string('id')->primary();
+            $table->uuid('user_id');
             $table->foreignId('room_user_id')->references("id")->on("room_user")->constrained();
+            $table->foreign('user_id')->references("id")->on("users")->constrained();
             $table->foreignId('room_id')->references("id")->on("rooms")->constrained();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('description');

@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function postPayment($id, $user_id, $description, $price_pay, $room_id)
+    public function postPayment($id, $room_user_id, $user_id, $description, $price_pay, $room_id)
     {
 
         $data = [
             'id' => $id,
-            'room_user_id' => $user_id,
+            'room_user_id' => $room_user_id,
+            'user_id' => $user_id,
             'description' => $description,
             'price_pay' => $price_pay,
             'room_id' => $room_id,

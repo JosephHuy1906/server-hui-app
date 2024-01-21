@@ -9,10 +9,14 @@ class Payment extends Model
 {
     use HasFactory;
 
-
+    public function roomUser()
+    {
+        return $this->belongsTo(RoomUser::class, 'room_user_id');
+    }
     protected $fillable = [
         'id',
         'room_user_id',
+        'user_id',
         'status',
         'description',
         'price_pay',
