@@ -25,6 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('/signup', [AuthController::class, 'signup']);
+Route::post('send-mail', [UserController::class, 'checkMailAndSeid']);
+Route::post('forget-pass', [UserController::class, 'forgetPassword']);
 
 Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
 Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');

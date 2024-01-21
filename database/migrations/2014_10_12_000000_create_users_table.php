@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('role', ['User', 'Admin', 'SubAdmin'])->default('User');
             $table->enum('rank', ['Thành viên mới', 'Thành viên bạc', 'Thành viên vàng', 'Thành viên kim cương'])->default('Thành viên mới');
             $table->string('password');
+            $table->string('code')->nullable();
             $table->text('cccd_after')->nullable();
             $table->text('cccd_before')->nullable();
             $table->integer('user_count')->default(0);
