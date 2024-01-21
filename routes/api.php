@@ -57,6 +57,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('message/room/{id}', [MessageController::class, 'getMessage']);
 
     Route::get('notification/user/{id}', [NotificationController::class, 'getNotiByUser']);
+    Route::get('notification/admin/{id}', [NotificationController::class, 'getNotiByAdmin']);
     Route::post('notification/post', [NotificationController::class, 'sendNotification']);
     Route::delete('notification/remove/{id}', [NotificationController::class, 'removeNotiByUser']);
 

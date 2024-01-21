@@ -241,6 +241,7 @@ class CheckoutController extends Controller
             $payment->postPayment(
                 $oderID,
                 $request->room_user_id,
+                $request->user_id,
                 'Đến hạn đóng tiền hụi  ngày ' . $date,
                 $request->amount,
                 $request->room_id
@@ -332,29 +333,20 @@ class CheckoutController extends Controller
                 'status' => 'approved'
             ]);
             $find = UserWinHui::find($checkout->user_win_hui_id);
+            $room = Room::find($checkout->room_id);
             if ($find) {
                 $find->update([
                     'status' => 'approved'
                 ]);
+                $room->update([
+                    'accumulated_amount' => 0
+                ]);
+
                 $totalAmountPayable = number_format($find->total_amount_payable, 0, ',', '.');
                 $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $totalAmountPayable . 'đ', $find->room_id);
                 $notication->postNotification($find->user_id, 'admin', 'User ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ', $find->room_id);
             }
-            if (!$find) {
-                $totalAmountPayable = number_format($checkout->price, 0, ',', '.');
-                $notication->postNotification(
-                    $checkout->user_id,
-                    'user',
-                    'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
-                    null
-                );
-                $notication->postNotification(
-                    $checkout->user_id,
-                    'admin',
-                    'User ' . $checkout->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ',
-                    null
-                );
-            }
+
             return view('success');
         } catch (\Throwable $th) {
             return $this->errorResponse('Server Error', 500);
@@ -392,21 +384,7 @@ class CheckoutController extends Controller
                     $find->room_id
                 );
             }
-            if (!$find) {
-                $totalAmountPayable = number_format($checkout->price, 0, ',', '.');
-                $notication->postNotification(
-                    $checkout->user_id,
-                    'User',
-                    'Bạn đã huỷ hoá đơn ' . $totalAmountPayable . 'đ ',
-                    null
-                );
-                $notication->postNotification(
-                    $checkout->user_id,
-                    'Admin',
-                    'User ' . $checkout->user_id . ' đã huỷ hoá đơn' . $totalAmountPayable . 'đ ',
-                    null
-                );
-            }
+
             return view('cancel');
         } catch (\Throwable $e) {
             return $this->errorResponse('Server Error',  500);

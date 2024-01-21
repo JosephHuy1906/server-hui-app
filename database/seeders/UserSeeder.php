@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
                 'updated_at' => '2023-12-25 12:35:25'
             ], [
                 'id' => 'c691d181-2ddf-4469-8bfb-42c314e52486',
-                'email' => 'huy@gmail.com',
+                'email' => 'josephhuy19082002@gmail.com',
                 'name' => 'Nguyễn Quang Huy',
                 'password' => '$2y$12$y1e51avVHePHFi9a/08Tf.Y4gGSnW4gTZd9Uksc/LzW1MojmoI.Im',
                 'birthday' => '19-09-2000',

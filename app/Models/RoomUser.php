@@ -18,6 +18,11 @@ class RoomUser extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'room_user_id');
+    }
+
     protected $fillable = [
         'room_id',
         'user_id',
