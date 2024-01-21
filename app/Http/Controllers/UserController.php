@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -172,6 +174,69 @@ class UserController extends Controller
             return $this->successResponse('Get all user successfully',  UserResource::collection($data), 201);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
+        }
+    }
+
+    public function checkMailAndSeid(Request $request)
+    {
+        try {
+            $validate = Validator::make($request->all(), [
+                'email' => 'required|email'
+            ]);
+
+            if ($validate->fails()) {
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
+            }
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return $this->errorResponse('Email bạn chưa đăng ký tài khoản',  400);
+            }
+
+            $name = $user->name;
+            $code =  Str::random(64);
+            $user->update([
+                "code" => $code
+            ]);
+            Mail::send('emails.forgetPass', compact('name', 'code'), function ($email) use ($request) {
+                $email->to($request->email, 'putapp')
+                    ->subject('Khôi phục lại password');
+            });
+            return $this->successResponse('Email khôi phục mật khẩu đã được gửi', [], 200);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(),  500);
+        }
+    }
+    public function forgetPassword(Request $request)
+    {
+        try {
+            $validate = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|min:6',
+                'confirm_password' => 'required|same:password',
+                'code' => 'required'
+            ]);
+
+            if ($validate->fails()) {
+                return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
+            }
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return $this->errorResponse('Email bạn chưa đăng ký tài khoản',  404);
+            }
+            if ($user->code !== $request->code) {
+                return $this->errorResponse('Code bạn nhập chưa đúng',  401);
+            }
+
+            $pass =  $user->password = Hash::make($request->password);
+            $user->update([
+                'password' => $pass,
+                'code' => ""
+            ]);
+            return $this->successResponse('Bạn đã đổi lại password thành công', null, 201);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
 }
