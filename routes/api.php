@@ -26,6 +26,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('/signup', [AuthController::class, 'signup']);
 
+Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
+Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('profile', [AuthController::class, 'profile']);
@@ -35,13 +37,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
     Route::get('users', [UserController::class, 'getAllUser']);
+    Route::post('user/update-rank/{id}', [UserController::class, 'updateRank']);
 
-    Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
-    Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
 
     Route::get('room/user/{userId}/{item}', [RoomController::class, 'getRoomsByUserId']);
     Route::get('rooms/{item}', [RoomController::class, 'getAllRoomsWithUsers']);
     Route::post('room/actionroom', [RoomUserController::class, 'addUserForRoom']);
+    Route::get('look-user-in-room/{id}', [RoomUserController::class, 'updateStatusUser']);
     Route::post('room/addroom', [RoomController::class, 'addroom']);
     Route::get('room/detail/{id}', [RoomController::class, 'getDetailRoom']);
     Route::get('rooms/count/{id}', [RoomController::class, 'getRoomsByCount']);
@@ -72,6 +74,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('checkout', [CheckoutController::class, 'checkout']);
     Route::get('checkout/user/{id}', [CheckoutController::class, 'getByUser']);
     Route::post('create-payment-link', [CheckoutController::class, 'createPaymentLink']);
+    Route::post('create-payment-room-link', [CheckoutController::class, 'createPaymenRoomUsertLink']);
     Route::get('payment-info/{id}', [CheckoutController::class, 'getPaymentLinkInfoOfOrder']);
     Route::get('payment-cancel/{id}', [CheckoutController::class, 'cancelPaymentLinkOfOrder']);
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('sex', ['Nam', 'Nữ', 'Khác'])->nullable();
             $table->text('address')->nullable();
             $table->enum('role', ['User', 'Admin', 'SubAdmin'])->default('User');
+            $table->enum('rank', ['Thành viên mới', 'Thành viên bạc', 'Thành viên vàng', 'Thành viên kim cương'])->default('Thành viên mới');
             $table->string('password');
             $table->text('cccd_after')->nullable();
             $table->text('cccd_before')->nullable();

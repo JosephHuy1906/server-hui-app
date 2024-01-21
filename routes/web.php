@@ -18,14 +18,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::match(['get', 'post'], '/vnpay-callback', [CheckoutController::class, 'handleCallback']);
+// Route::match(['get', 'post'], '/vnpay-callback', [CheckoutController::class, 'handleCallback']);
 
 Route::post('/create-payment-link', [CheckoutController::class, 'createPaymentLink']);
 
-Route::get('/success', function () {
-    return view('success');
-});
+Route::match(['get', 'post'], '/success', [CheckoutController::class, 'handlePaymentSuccessAuctionHui']);
 
-Route::get('/cancel', function () {
-    return view('cancel');
-});
+Route::match(['get', 'post'], '/cancel', [CheckoutController::class, 'handlePaymentCancelAuctionHui']);
+
+
+Route::match(['get', 'post'], '/successRoom', [CheckoutController::class, 'handlePaymentSuccessRoom']);
+
+Route::match(['get', 'post'], '/cancelRoom', [CheckoutController::class, 'handlePaymentCancelRoom']);

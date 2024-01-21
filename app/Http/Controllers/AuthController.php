@@ -19,7 +19,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
         if ($validateUser->fails()) {
-            return $this->errorResponse("Vui lòng điền đúng và đủ thông tin",  401);
+            return $this->errorResponse("Vui lòng điền đúng và đủ thông tin",  404);
         }
 
         if (!Auth::attempt($request->only(['email', 'password']))) {
@@ -36,7 +36,7 @@ class AuthController extends Controller
     public function signup(Request $request)
     {
         try {
-
+            $image = new ImageController();
             $validate = Validator::make(
                 $request->all(),
                 [
@@ -44,29 +44,52 @@ class AuthController extends Controller
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|min:6',
                     'phone' => 'required',
+                    'cccd_after' => 'sometimes|image|mimes:jpeg,png,jpg|max:4048',
+                    'cccd_before' => 'sometimes|image|mimes:jpeg,png,jpg|max:4048',
                 ]
             );
             if ($validate->fails()) {
-                return $this->errorResponse("Vui lòng điền đủ thông tin",  401);
+                return $this->errorResponse("Vui lòng điền đúng và đủ thông tin",  404);
             }
-            $email = User::find($request->email);
-            if ($email) {
-                return $this->errorResponse("Email Không tồn tại", 404);
-            }
-            $user =  User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'password' => Hash::make($request->password),
-            ]);
 
-            $data = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'token' => $user->createToken("API TOKEN")->plainTextToken
-            ];
-            return $this->successResponse("Đăng ký tài khoản thành công", $data, 201);
+            if ($request->cccd_after && $request->cccd_before) {
+                $cccdAfterPath = $image->uploadImage($request->file('cccd_after'), 'images/users');
+                $cccdBeforePath = $image->uploadImage($request->file('cccd_before'), 'images/users');
+
+                $user =  User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'password' => Hash::make($request->password),
+                    'cccd_after' => $cccdAfterPath,
+                    'cccd_before' => $cccdBeforePath,
+                ]);
+
+                $data = [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'cccd_after' => $cccdAfterPath,
+                    'cccd_before' => $cccdBeforePath,
+                    'token' => $user->createToken("API TOKEN")->plainTextToken
+                ];
+                return $this->successResponse("Đăng ký tài khoản thành công", $data, 201);
+            } else {
+                $user =  User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                $data = [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'token' => $user->createToken("API TOKEN")->plainTextToken
+                ];
+                return $this->successResponse("Đăng ký tài khoản thành công", $data, 201);
+            }
         } catch (\Throwable $th) {
             return $this->error("Server Error", 500);
         }

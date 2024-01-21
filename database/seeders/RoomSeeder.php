@@ -22,6 +22,7 @@ class RoomSeeder extends Seeder
                 'total_user' => 5,
                 'payment_time' => 'End day',
                 'status' => 'Open',
+                'accumulated_amount' => 0,
                 'date_room_end' => '2023-12-30 12:35:25',
                 'created_at' => '2023-12-25 12:35:25',
                 'updated_at' => '2023-12-25 12:35:25'
@@ -34,6 +35,7 @@ class RoomSeeder extends Seeder
                 'total_user' => 10,
                 'payment_time' => 'End day',
                 'status' => 'Open',
+                'accumulated_amount' => 0,
                 'date_room_end' => '2024-01-04 12:35:25',
                 'created_at' => '2023-12-25 12:35:25',
                 'updated_at' => '2023-12-25 12:35:25'
@@ -46,6 +48,7 @@ class RoomSeeder extends Seeder
                 'total_user' => 20,
                 'payment_time' => 'End of Month',
                 'status' => 'Close',
+                'accumulated_amount' => 0,
                 'date_room_end' => '2024-12-25 12:35:25',
                 'created_at' => '2023-12-25 12:35:25',
                 'updated_at' => '2023-12-25 12:35:25'

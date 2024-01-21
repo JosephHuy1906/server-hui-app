@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\RoomUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -94,5 +95,21 @@ class RoomUserController extends Controller
         } catch (\Throwable $err) {
             return $this->errorResponse("Server Error",  500);
         }
+    }
+
+    public function updateStatusUser(Request $request, $id)
+    {
+        $noti = new NotificationController();
+        $room_user = RoomUser::find($id);
+
+        if (!$room_user) {
+            return $this->errorResponse('Không tìm thấy user room id', 404);
+        }
+
+        $room_user->update([
+            "status" => 'Đã bị khoá'
+        ]);
+        $noti->postNotification($room_user->user_id, "User", "Bạn đã bị khoá trong phòng hụi và không thể chơi", $room_user->room_id);
+        return $this->successResponse("Khoá người dùng thành công", null, 201);
     }
 }

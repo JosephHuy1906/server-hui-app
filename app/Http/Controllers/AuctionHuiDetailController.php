@@ -15,7 +15,7 @@ class AuctionHuiDetailController extends Controller
     public function auctionHui(Request $request)
     {
         try {
-            
+
             $noti = new NotificationController();
             $validator = Validator::make($request->all(), [
                 'auction_hui_id' => 'required',
@@ -39,7 +39,7 @@ class AuctionHuiDetailController extends Controller
     public function getAuctionHui($id)
     {
         try {
-            
+
             $data = AuctionHuiDetail::where('auction_hui_id', $id)->get();
             return $this->successResponse('Lấy danh sách đấu giá hụi theo phòng thành công', AuctionHuiDetailResource::collection($data), 200);
         } catch (\Throwable $err) {
@@ -50,16 +50,12 @@ class AuctionHuiDetailController extends Controller
     public function getTotal($id)
     {
         try {
-            
-
             $maxTotalPrice = AuctionHuiDetail::where('auction_hui_id', $id)
                 ->select(DB::raw('MAX(total_price) as max_total_price'))
-                ->first()
-                ->max_total_price;
+                ->first()->max_total_price;
 
             $usersWithMaxTotalPrice = AuctionHuiDetail::where('auction_hui_id', $id)
-                ->where('total_price', $maxTotalPrice)
-                ->get();
+                ->where('total_price', $maxTotalPrice)->get();
 
             return $this->successResponse('Người đấu giá hụi thành công', AuctionHuiDetailResource::collection($usersWithMaxTotalPrice), 200);
         } catch (\Throwable $err) {
@@ -69,13 +65,13 @@ class AuctionHuiDetailController extends Controller
     public function postUserWin(Request $request)
     {
         try {
-            
+
             $notication = new NotificationController();
             $validator = Validator::make($request->all(), [
                 'room_id' => 'required',
                 'auction_hui_id' => 'required',
-                'price_room' => 'required',
                 'total_user' => 'required',
+                'accumulated_amount' => 'required',
                 'commission_percentage' => 'required',
             ]);
 
@@ -84,24 +80,24 @@ class AuctionHuiDetailController extends Controller
             }
 
             $usersWithMaxTotalPrice = $this->getTotal($request->auction_hui_id);
-
             $responseData = $usersWithMaxTotalPrice->getData();
-
-            if (!isset($responseData->status) || !isset($responseData->success) || $responseData->status != 200 || !$responseData->success) {
+            if (
+                !isset($responseData->status) ||
+                !isset($responseData->success) ||
+                $responseData->status != 200 ||
+                !$responseData->success
+            ) {
                 return $this->errorResponse('Không tìm được người chiến thắng', 500);
             }
-
             $winningBidder = $responseData->data[0];
-
             $total_amount_payable = $winningBidder->total_price;
-            $total_auction = $request->price_room * ($request->total_user - 1);
-            $total_money_received = $total_auction - (($total_auction * $request->commission_percentage) / 100);
+            $total_money_received = $request->accumulated_amount - (($request->accumulated_amount * $request->commission_percentage) / 100);
 
             $addUserWin = [
                 'user_id' => $winningBidder->user->user_id,
                 'commission_percentage' => $request->commission_percentage,
                 'price_pay_hui' => $winningBidder->total_price,
-                'total_auction' => $total_auction,
+                'total_auction' => $request->accumulated_amount,
                 'room_id' => $request->room_id,
                 'total_amount_payable' => $total_amount_payable,
                 'total_money_received' => $total_money_received,

@@ -17,6 +17,7 @@ class Room extends Model
         'payment_time',
         'date_room_end',
         'total_user',
+        'accumulated_amount',
         'status'
     ];
     public function users()

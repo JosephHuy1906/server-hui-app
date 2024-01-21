@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('status', ['Open', 'Lock', 'Close']);
             $table->timestamp('date_room_end');
             $table->integer('total_user');
+            $table->integer('accumulated_amount')->default(0);
             $table->timestamps();
         });
     }

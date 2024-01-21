@@ -22,6 +22,7 @@ class User extends Authenticatable
         'phone',
         'address',
         'sex',
+        'rank',
         'birthday',
         'cccd_before',
         'cccd_after',
