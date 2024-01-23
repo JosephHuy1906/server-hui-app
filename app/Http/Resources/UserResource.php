@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'rank' => $this->rank,
             'cccd_after' => $this->cccd_after,
             'cccd_before' => $this->cccd_before,
+            'device_id' => $this->device_id,
             'email_verified_at' => $this->email_verified_at,
             'remember_token' => $this->remember_token,
             'created_at' => $this->created_at,

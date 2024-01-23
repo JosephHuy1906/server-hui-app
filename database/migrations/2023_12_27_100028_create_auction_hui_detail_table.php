@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('user_id');
             $table->integer('starting_price');
             $table->float('auction_percentage');
-            $table->float('total_price');
+            $table->integer('total_price');
             $table->timestamps();
             $table->foreignId('auction_hui_id')->references('id')->on('auction_hui_room');
         });

@@ -117,9 +117,9 @@ class UserWinHuiController extends Controller
         }
 
         $result = [
-            'Tiền lời' => $totalProfit,
-            'Tiền đóng' => $totalAmountPayable,
-            'Tiền rút' => $totalProfit,
+            'profit' => $totalProfit,
+            'money_paid' => $totalAmountPayable,
+            'money_withdrawn' => $totalProfit,
         ];
         return $this->successResponse("Tiền lãi, tiền đóng của bạn ", $result, 200);
     }
