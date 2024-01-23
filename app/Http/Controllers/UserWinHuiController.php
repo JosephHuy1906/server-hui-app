@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserWinHuiResource;
+use App\Models\User;
 use App\Models\UserWinHui;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,14 +13,25 @@ class UserWinHuiController extends Controller
     public function updatePaid($id)
     {
         try {
-
             $notication = new NotificationController();
             $find = UserWinHui::find($id);
+            $user = User::find($find->user_id);
             if (!$find)  return $this->errorResponse("User chiến thắng không tồn tại",  404);
             $find->update([
                 'status' => 'approved'
             ]);
-            $notication->postNotification($find->user_id, "User", 'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.', $find->room_id);
+            $notication->postNotification(
+                $find->user_id,
+                "User",
+                'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
+                $find->room_id
+            );
+            if ($user->device_id !== null) {
+                $this->sendNoticationApp(
+                    $user->device_id,
+                    'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.'
+                );
+            }
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
         }
@@ -36,11 +48,23 @@ class UserWinHuiController extends Controller
             }
             $notication = new NotificationController();
             $find = UserWinHui::find($id);
+            $user = User::find($find->user_id);
             if (!$find)  return $this->errorResponse("User chiến thắng không tồn tại",  404);
             $find->update([
                 'status' => $request->status
             ]);
-            $notication->postNotification($find->user_id, "User", 'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.', $find->room_id);
+            $notication->postNotification(
+                $find->user_id,
+                "User",
+                'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
+                $find->room_id
+            );
+            if ($user->device_id !== null) {
+                $this->sendNoticationApp(
+                    $user->device_id,
+                    'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.'
+                );
+            }
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
         }

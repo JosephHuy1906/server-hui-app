@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Ladumor\OneSignal\OneSignal;
+
 trait HttpResponses
 {
     protected function successResponse($message, $data = null, $status)
@@ -20,5 +22,11 @@ trait HttpResponses
             'success' => false,
             'message' => $message,
         ], $status);
+    }
+    protected function sendNoticationApp($devieID, $message)
+    {
+        $fields['include_player_ids'] = [$devieID];
+
+        OneSignal::sendPush($fields, $message);
     }
 }

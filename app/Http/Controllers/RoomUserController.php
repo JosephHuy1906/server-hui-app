@@ -107,7 +107,8 @@ class RoomUserController extends Controller
     {
         $noti = new NotificationController();
         $room_user = RoomUser::find($id);
-
+        $room = Room::find($room_user->room_id);
+        $user = User::find($room_user->user_id);
         if (!$room_user) {
             return $this->errorResponse('Không tìm thấy user room id', 404);
         }
@@ -115,15 +116,27 @@ class RoomUserController extends Controller
         $room_user->update([
             "status" => 'Đã bị khoá'
         ]);
-        $noti->postNotification($room_user->user_id, "User", "Bạn đã bị khoá trong phòng hụi và không thể chơi", $room_user->room_id);
+        $noti->postNotification(
+            $room_user->user_id,
+            "User",
+            "Bạn đã bị khoá trong phòng hụi và không thể chơi",
+            $room_user->room_id
+        );
+        if ($user->device_id !== null) {
+            $this->sendNoticationApp(
+                $user->device_id,
+                "Bạn đã bị khoá trong phòng " . $room->title . " và không thể chơi"
+            );
+        }
         return $this->successResponse("Khoá người dùng thành công", null, 201);
     }
 
-    public function unLockUser(Request $request, $id)
+    public function unLockUser($id)
     {
         $noti = new NotificationController();
         $room_user = RoomUser::find($id);
-
+        $room = Room::find($room_user->room_id);
+        $user = User::find($room_user->user_id);
         if (!$room_user) {
             return $this->errorResponse('Không tìm thấy user room id', 404);
         }
@@ -131,7 +144,19 @@ class RoomUserController extends Controller
         $room_user->update([
             "status" => 'Đang hoạt động'
         ]);
-        $noti->postNotification($room_user->user_id, "User", "Bạn đã bị khoá trong phòng hụi và không thể chơi", $room_user->room_id);
+
+        $noti->postNotification(
+            $room_user->user_id,
+            "User",
+            "Bạn đã được admin mở khoá trong phòng " . $room->title . " và có thể bắt đầu chơi ngay bây giờ",
+            $room_user->room_id
+        );
+        if ($user->device_id !== null) {
+            $this->sendNoticationApp(
+                $user->device_id,
+                "Bạn đã được admin mở khoá trong phòng " . $room->title . " và có thể bắt đầu chơi ngay bây giờ"
+            );
+        }
         return $this->successResponse("Khoá người dùng thành công", null, 201);
     }
 

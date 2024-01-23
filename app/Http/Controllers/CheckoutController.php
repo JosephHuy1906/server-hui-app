@@ -287,6 +287,7 @@ class CheckoutController extends Controller
             $user = RoomUser::find($payment->room_user_id);
             $checkout = Checkout::find($orderCode);
             $notication = new NotificationController();
+            $data = User::find($user->user_id);
             $date = date('d/m/Y H:i:s');
             if ($payment->status === 'approved') {
                 return view('successRoom');
@@ -306,6 +307,12 @@ class CheckoutController extends Controller
                     'Bạn đã đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date . ' Thành công',
                     $payment->room_id
                 );
+                if ($data->device_id !== null) {
+                    $this->sendNoticationApp(
+                        $data->device_id,
+                        'Bạn đã đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date . ' Thành công'
+                    );
+                }
                 return view('successRoom');
             }
         } catch (\Throwable $th) {
@@ -320,6 +327,7 @@ class CheckoutController extends Controller
             $payment = Payment::find($orderCode);
             $checkout = Checkout::find($orderCode);
             $user = RoomUser::find($payment->room_user_id);
+            $data = User::find($user->user_id);
             $date = date('d/m/Y H:i:s');
             if ($payment->status === 'rejected') {
                 return view('cancelRoom');
@@ -338,6 +346,12 @@ class CheckoutController extends Controller
                     'Bạn vẫn chưa đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date,
                     $payment->room_id
                 );
+                if ($data->device_id !== null) {
+                    $this->sendNoticationApp(
+                        $data->device_id,
+                        'Bạn vẫn chưa đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date,
+                    );
+                }
                 return view('cancelRoom');
             }
         } catch (\Throwable $th) {
@@ -359,6 +373,7 @@ class CheckoutController extends Controller
             ]);
             $find = UserWinHui::find($checkout->user_win_hui_id);
             $room = Room::find($checkout->room_id);
+            $data = User::find($find->user_id);
             if ($find) {
                 $find->update([
                     'status' => 'approved'
@@ -368,8 +383,24 @@ class CheckoutController extends Controller
                 ]);
 
                 $totalAmountPayable = number_format($find->total_amount_payable, 0, ',', '.');
-                $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $totalAmountPayable . 'đ', $find->room_id);
-                $notication->postNotification($find->user_id, 'admin', 'User có id là: ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ', $find->room_id);
+                $notication->postNotification(
+                    $find->user_id,
+                    'user',
+                    'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
+                    $find->room_id
+                );
+                $notication->postNotification(
+                    $find->user_id,
+                    'admin',
+                    'User có id là: ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ',
+                    $find->room_id
+                );
+                if ($data->device_id !== null) {
+                    $this->sendNoticationApp(
+                        $data->device_id,
+                        'Bạn đã thanh toán ' . $totalAmountPayable . 'đ'
+                    );
+                }
             }
 
             return view('success');
@@ -391,6 +422,7 @@ class CheckoutController extends Controller
                 'status' => 'rejected'
             ]);
             $find = UserWinHui::find($checkout->user_win_hui_id);
+            $data = User::find($find->user_id);
             if ($find) {
                 $find->update([
                     'status' => 'rejected'
@@ -408,6 +440,12 @@ class CheckoutController extends Controller
                     'User ' . $checkout->user_id . ' đã huỷ hoá đơn' . $totalAmountPayable . 'đ ',
                     $find->room_id
                 );
+                if ($data->device_id !== null) {
+                    $this->sendNoticationApp(
+                        $data->device_id,
+                        'User ' . $checkout->user_id . ' đã huỷ hoá đơn' . $totalAmountPayable . 'đ ',
+                    );
+                }
             }
 
             return view('cancel');
