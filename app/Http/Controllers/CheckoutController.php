@@ -12,6 +12,7 @@ use App\Models\UserWinHui;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -145,7 +146,12 @@ class CheckoutController extends Controller
             if ($validator->fails()) {
                 return $this->errorResponse('Thông tin truyền vào chưa đúng', 400);
             }
-            $oderID = intval(substr(strval(microtime(true) * 10000), -64));
+            $oderID = intval(substr(strval(microtime(true) * 10000), -128));
+            $oderCheck = Checkout::find($oderID);
+            while ($oderCheck) {
+                $oderID = intval(substr(strval(microtime(true) * 10000), -128));
+                $oderCheck = Checkout::find($oderID);
+            }
             $data = [
                 "orderCode" => $oderID,
                 "amount" => $request->amount,
@@ -192,25 +198,49 @@ class CheckoutController extends Controller
         }
     }
 
+    public function postCheckout($price, $description, $room_user_id, $room_id, $user_id)
+    {
+        $payment = new PaymentController();
+        $date = date('d/m/Y H:i:s');
+        $oderID = str::random(10);
+
+        $dataCheckOut = [
+            "id" => $oderID,
+            "price" => $price,
+            "description" => $description,
+            "user_id" => $user_id,
+            'room_id' => $room_id,
+        ];
+        Checkout::create($dataCheckOut);
+        $payment->postPayment(
+            $oderID,
+            $room_user_id,
+            $user_id,
+            'Đến hạn đóng tiền hụi  ngày ' . $date,
+            $price,
+            $room_id
+        );
+    }
     public function createPaymenRoomUsertLink(Request $request)
     {
         try {
-            $payment = new PaymentController();
-            $notication = new NotificationController();
             $baseUrl = env('APP_URL');
             $validator = Validator::make($request->all(), [
                 'amount' => 'required',
                 'description' => 'required',
-                'user_id' => 'required',
-                'room_id' => 'required',
-                'room_user_id' => 'required',
+                'order_id' => 'required',
             ]);
             if ($validator->fails()) {
                 return $this->errorResponse('Thông tin truyền vào chưa đúng', 400);
             }
-            $oderID = intval(substr(strval(microtime(true) * 10000), -64));
+            $oderCode = intval(substr(strval(microtime(true) * 10000), -128));
+            $oderCheck = Checkout::find($oderCode);
+            while ($oderCheck) {
+                $oderCode = intval(substr(strval(microtime(true) * 10000), -128));
+                $oderCheck = Checkout::find($oderCode);
+            }
             $data = [
-                "orderCode" => $oderID,
+                "orderCode" => $oderCode,
                 "amount" => $request->amount,
                 "description" => $request->description,
                 "returnUrl" => $baseUrl . "/successRoom",
@@ -229,30 +259,16 @@ class CheckoutController extends Controller
             if ($responseDataSignature != $response["signature"]) {
                 return $this->errorResponse("Signature not match",  404);
             }
-            $dataCheckOut = [
-                "id" => $oderID,
-                "price" => $request->amount,
-                "description" => $request->description,
-                "user_id" => $request->user_id,
-                'room_id' => $request->room_id,
-            ];
-            $date = date('d/m/Y H:i:s');
-            Checkout::create($dataCheckOut);
-            $payment->postPayment(
-                $oderID,
-                $request->room_user_id,
-                $request->user_id,
-                'Đến hạn đóng tiền hụi  ngày ' . $date,
-                $request->amount,
-                $request->room_id
-            );
-            $totalAmountPayable = number_format($request->amount, 0, ',', '.');
-            $notication->postNotification(
-                $request->user_id,
-                'User',
-                'Hoá đơn với số tiền: ' . $totalAmountPayable . 'đ đang chờ bạn thanh toán',
-                $request->room_id
-            );
+            $oder = Checkout::find($request->order_id);
+            $payment = Payment::find($request->order_id);
+            if ($oder) {
+                $oder->update([
+                    'id' => $oderCode,
+                ]);
+                $payment->update([
+                    'id' => $oderCode,
+                ]);
+            }
             return $this->successResponse(
                 'Create Payment link success',
                 ['bankURL' => $response["data"]["checkoutUrl"]],
@@ -269,12 +285,16 @@ class CheckoutController extends Controller
             $orderCode = $request->input('orderCode');
             $payment = Payment::find($orderCode);
             $user = RoomUser::find($payment->room_user_id);
+            $checkout = Checkout::find($orderCode);
             $notication = new NotificationController();
             $date = date('d/m/Y H:i:s');
             if ($payment->status === 'approved') {
                 return view('successRoom');
             } else {
                 $payment->update([
+                    'status' => 'approved'
+                ]);
+                $checkout->update([
                     'status' => 'approved'
                 ]);
                 $room = Room::find($payment->room_id);
@@ -298,6 +318,7 @@ class CheckoutController extends Controller
             $orderCode = $request->input('orderCode');
             $notication = new NotificationController();
             $payment = Payment::find($orderCode);
+            $checkout = Checkout::find($orderCode);
             $user = RoomUser::find($payment->room_user_id);
             $date = date('d/m/Y H:i:s');
             if ($payment->status === 'rejected') {
@@ -306,6 +327,10 @@ class CheckoutController extends Controller
                 $payment->update([
                     'status' => 'rejected'
                 ]);
+                $checkout->update([
+                    'status' => 'rejected'
+                ]);
+
 
                 $notication->postNotification(
                     $user->user_id,
@@ -344,7 +369,7 @@ class CheckoutController extends Controller
 
                 $totalAmountPayable = number_format($find->total_amount_payable, 0, ',', '.');
                 $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $totalAmountPayable . 'đ', $find->room_id);
-                $notication->postNotification($find->user_id, 'admin', 'User ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ', $find->room_id);
+                $notication->postNotification($find->user_id, 'admin', 'User có id là: ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ', $find->room_id);
             }
 
             return view('success');

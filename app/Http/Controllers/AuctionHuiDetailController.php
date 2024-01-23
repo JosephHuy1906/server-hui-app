@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\AuctionHuiDetailResource;
 use App\Http\Resources\UserWinHuiResource;
 use App\Models\AuctionHuiDetail;
+use App\Models\AuctionHuiRoom;
 use App\Models\UserWinHui;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,12 +29,15 @@ class AuctionHuiDetailController extends Controller
             if ($validator->fails()) {
                 return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
-
+            $price_end = $this->checkPriceAuction($request->auction_hui_id);
+            if ($request->total_price <= $price_end->total_price) {
+                return $this->errorResponse('Phần trăm đấu giá phải cao hơn phần trăm đấu giá của người phía trước', 401);
+            }
             $create = AuctionHuiDetail::create($request->all());
             $noti->postNotification($request->user_id, 'user', 'Bạn đã đấu giá hụi thành công', $request->room_id);
             return $this->successResponse('Bạn đã đấu giá hụi thành công', new AuctionHuiDetailResource($create), 201);
-        } catch (\Throwable $err) {
-            return $this->errorResponse("Server Error",  500);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
     public function getAuctionHui($id)
@@ -58,6 +62,20 @@ class AuctionHuiDetailController extends Controller
                 ->where('total_price', $maxTotalPrice)->get();
 
             return $this->successResponse('Người đấu giá hụi thành công', AuctionHuiDetailResource::collection($usersWithMaxTotalPrice), 200);
+        } catch (\Throwable $err) {
+            return $this->errorResponse("Server Error",  500);
+        }
+    }
+    public function checkPriceAuction($id)
+    {
+        try {
+            $maxTotalPrice = AuctionHuiDetail::where('auction_hui_id', $id)
+                ->select(DB::raw('MAX(total_price) as max_total_price'))
+                ->first()->max_total_price;
+
+            $usersWithMaxTotalPrice = AuctionHuiDetail::where('auction_hui_id', $id)
+                ->where('total_price', $maxTotalPrice)->first();
+            return $usersWithMaxTotalPrice;
         } catch (\Throwable $err) {
             return $this->errorResponse("Server Error",  500);
         }

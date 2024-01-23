@@ -175,13 +175,14 @@ class UserController extends Controller
     public function getUserByID($id)
     {
         try {
-            $data = User::find($id);
-            if (!$data) {
-                return $this->errorResponse('User id sai hoặc không tồn tại', 401);
+
+            $user = User::find($id);
+            if (!$user) {
+                return $this->errorResponse('User không tồn tại',  404);
             }
-            return $this->successResponse('Get all user successfully',  UserResource::collection($data), 201);
+            return $this->successResponse('Get all user successfully', new  UserResource($user), 201);
         } catch (\Throwable $th) {
-            return $this->errorResponse("Server Error",  500);
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
 

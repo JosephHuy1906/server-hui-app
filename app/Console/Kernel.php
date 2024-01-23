@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Models\Room;
@@ -32,10 +33,10 @@ class Kernel extends ConsoleKernel
             }
         })->everyMinute()->name('check-and-look-room')->withoutOverlapping();
 
+
         $schedule->call(function () {
             $notication = new NotificationController();
-            $payment = new PaymentController();
-            $date = date('d/m/Y H:i:s');
+            $checkout = new CheckoutController();
             $rooms = Room::where('payment_time', 'End day')
                 ->where('status', 'Lock')
                 ->get();
@@ -44,16 +45,16 @@ class Kernel extends ConsoleKernel
                     ->whereNotIn('user_id', ['4bdc395e-77d4-4602-8e0f-af6bb401560f'])
                     ->get();
                 foreach ($userList as $us) {
-                    $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title, $room->id);
-                    // $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
+                    $totalAmountPayable = number_format($room->price_room, 0, ',', '.');
+                    $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ", $room->id);
+                    $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
                 }
             }
-        })->dailyAt("17:00")->name('end_day_payment')->withoutOverlapping();
+        })->everyMinute()->name('end_day_payment')->withoutOverlapping();
 
         $schedule->call(function () {
             $notication = new NotificationController();
-            $payment = new PaymentController();
-            $date = date('d/m/Y H:i:s');
+            $checkout = new CheckoutController();
             $rooms = Room::where('payment_time', 'End of Month')
                 ->where('status', 'Lock')
                 ->get();
@@ -62,8 +63,9 @@ class Kernel extends ConsoleKernel
                     ->whereNotIn('user_id', ['4bdc395e-77d4-4602-8e0f-af6bb401560f'])
                     ->get();
                 foreach ($userList as $us) {
-                    $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title, $room->id);
-                    // $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
+                    $totalAmountPayable = number_format($room->price_room, 0, ',', '.');
+                    $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ", $room->id);
+                    $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
                 }
             }
         })->monthlyOn(28, '17:00')->name('end_of_month_payment')->withoutOverlapping();

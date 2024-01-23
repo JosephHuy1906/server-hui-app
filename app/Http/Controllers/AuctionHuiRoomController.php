@@ -29,14 +29,18 @@ class AuctionHuiRoomController extends Controller
                 return $this->errorResponse("Thông tin truyền vào chưa đúng",  400);
             }
             $room = Room::find($request->room_id);
+            $roomAuction = AuctionHuiRoom::where('room_id', $request->room_id)->first();
             if (!$room) {
-                return $this->errorResponse('room not found',  404);
+                return $this->errorResponse('Phòng hụi không tồn tại',  404);
+            }
+            if ($roomAuction) {
+                return $this->errorResponse('Phòng đấu hụi đang tồn tại bạn không thể tạo thêm phòng được',  400);
             }
 
             $auction = AuctionHuiRoom::create($request->all());
             return $this->successResponse("Phòng đấu giá hui đã tạo", new AuctionHuiRoomResource($auction), 201);
         } catch (\Throwable $th) {
-            return $this->errorResponse("Server Error",  500);
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
 
