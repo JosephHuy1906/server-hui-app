@@ -33,7 +33,7 @@ class BankAccountController extends Controller
             $addBank = BankAccount::create($request->all());
             return $this->successResponse("Thêm tài khoản ngân hàng thành công", BankAccounResource::collection($addBank), 201);
         } catch (\Throwable $th) {
-            return $this->errorResponse("Server Error",  500);
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
 

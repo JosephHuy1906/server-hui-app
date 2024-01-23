@@ -15,7 +15,6 @@ class BankAccount extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
     protected $fillable = [
-        'id',
         'user_id',
         'short_name',
         'number_bank',
