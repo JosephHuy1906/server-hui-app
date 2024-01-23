@@ -17,7 +17,6 @@ class RoomController extends Controller
     {
         try {
 
-            $this->checkAndUpdateRoomsStatus();
             $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->get();
@@ -31,7 +30,6 @@ class RoomController extends Controller
         try {
             $noti = new NotificationController();
             $us = User::find($userId);
-            $this->checkAndUpdateRoomsStatus();
             if (!$us) {
                 return $this->errorResponse('User không tồn tại',  404);
             }
@@ -150,7 +148,6 @@ class RoomController extends Controller
     public function getRoomsByCount($item)
     {
         try {
-            $this->checkAndUpdateRoomsStatus();
             $rooms = Room::withCount('users')->with(['users'])
                 ->take($item)
                 ->orderBy('users_count', 'desc')
@@ -167,7 +164,6 @@ class RoomController extends Controller
                 ->take($item)
                 ->orderBy('price_room', 'asc')
                 ->get();
-            $this->checkAndUpdateRoomsStatus();
             return $this->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
@@ -177,7 +173,6 @@ class RoomController extends Controller
     {
         try {
             $data = Room::withCount('users')->with(['users'])->findOrFail($id);
-            $this->checkAndUpdateRoomsStatus();
             return $this->successResponse('Get Detail room', new RoomResource($data), 200);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);

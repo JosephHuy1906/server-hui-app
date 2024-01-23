@@ -17,6 +17,21 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+
+        $schedule->call(function () {
+            $notication = new NotificationController();
+            $rooms = Room::withCount('users')->get();
+            foreach ($rooms as $room) {
+                if ($room->total_user == ($room->users_count - 1) && $room->status === 'Open') {
+                    $room->update(['status' => 'Lock']);
+                    $usersInRoom = $room->users;
+                    foreach ($usersInRoom as $user) {
+                        $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi', $room->id);
+                    }
+                }
+            }
+        })->everyMinute()->name('check-and-look-room')->withoutOverlapping();
+
         $schedule->call(function () {
             $notication = new NotificationController();
             $payment = new PaymentController();
@@ -33,7 +48,7 @@ class Kernel extends ConsoleKernel
                     // $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
                 }
             }
-        })->everyMinute()->name('end_day_payment')->withoutOverlapping();
+        })->dailyAt("17:00")->name('end_day_payment')->withoutOverlapping();
 
         $schedule->call(function () {
             $notication = new NotificationController();
@@ -51,7 +66,7 @@ class Kernel extends ConsoleKernel
                     // $payment->postPayment($us->id, 'Đến hạn đóng tiền hụi phòng ' . $room->title . ' ngày ' . $date, $room->price_room);
                 }
             }
-        })->monthlyOn(28, '18:00')->name('end_of_month_payment')->withoutOverlapping();
+        })->monthlyOn(28, '17:00')->name('end_of_month_payment')->withoutOverlapping();
     }
 
 

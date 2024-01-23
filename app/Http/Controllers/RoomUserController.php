@@ -26,6 +26,7 @@ class RoomUserController extends Controller
             if ($validator->fails()) {
                 return $this->errorResponse('Thông tin truyền vào chưa đúng', 400);
             }
+
             $existingRecord = DB::table('room_user')
                 ->where('room_id', $request->room_id)
                 ->where('user_id', $request->user_id)
@@ -49,6 +50,9 @@ class RoomUserController extends Controller
                         ->where('user_id', $request->user_id)
                         ->delete();
 
+                    if ($request->user_id === "4bdc395e-77d4-4602-8e0f-af6bb401560f") {
+                        return $this->errorResponse('Bạn không thể xoá admin ra khỏi phòng', 400);
+                    }
                     $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi ' . $room->title, $request->room_id);
                     return $this->successResponse('Remove User for room successfully', null, 201);
                 } else {

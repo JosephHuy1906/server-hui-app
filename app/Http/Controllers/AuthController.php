@@ -37,22 +37,22 @@ class AuthController extends Controller
     {
         try {
             $image = new ImageController();
-            $validate = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required',
-                    'email' => 'required|email|unique:users,email',
-                    'password' => 'required|min:6',
-                    'phone' => 'required',
-                    'cccd_after' => 'sometimes|image|mimes:jpeg,png,jpg|max:4048',
-                    'cccd_before' => 'sometimes|image|mimes:jpeg,png,jpg|max:4048',
-                ]
-            );
+            $validate = Validator::make($request->all(), [
+                'name' => 'required',
+                'email' => 'required|email',
+                'password' => 'required',
+                'phone' => 'required',
+                'cccd_before' => 'sometimes|image|mimes:jpeg,png,jpg|max:4048',
+                'cccd_after' => 'sometimes|image|mimes:jpeg,png,jpg|max:4048',
+            ]);
             if ($validate->fails()) {
                 return $this->errorResponse("Vui lòng điền đúng và đủ thông tin",  404);
             }
-
-            if ($request->cccd_after && $request->cccd_before) {
+            $check = User::where('email', $request->email)->first();
+            if ($check) {
+                return $this->errorResponse("Email này đã được đăng ký",  401);
+            }
+            if ($request->file('cccd_after') && $request->file('cccd_before')) {
                 $cccdAfterPath = $image->uploadImage($request->file('cccd_after'), 'images/users');
                 $cccdBeforePath = $image->uploadImage($request->file('cccd_before'), 'images/users');
 
