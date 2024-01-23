@@ -172,6 +172,7 @@ class RoomUserController extends Controller
             ->whereNotIn('user_id', [$excludedUserId])
             ->get();
 
-        return $this->successResponse('Danh sách người dùng chưa có thanh toán tiền hụi ngày ' . $today, RoomUserResource::collection($usersWithoutApprovedPayments), 200);
+        return $usersWithoutApprovedPayments;
+        // return $this->successResponse('Danh sách người dùng chưa có thanh toán tiền hụi ngày ' . $today, RoomUserResource::collection($usersWithoutApprovedPayments), 200);
     }
 }

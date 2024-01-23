@@ -17,6 +17,7 @@ class AuthController extends Controller
         $validateUser = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'device_id' => 'sometimes',
         ]);
         if ($validateUser->fails()) {
             return $this->errorResponse("Vui lòng điền đúng và đủ thông tin",  404);
@@ -26,7 +27,11 @@ class AuthController extends Controller
             return $this->errorResponse("Email hoặc password không đúng",  401);
         }
         $user = User::where('email', $request->email)->first();
-
+        if ($request->device_id) {
+            $user->update([
+                "device_id" => $request->device_id,
+            ]);
+        }
         $data = [
             'user' => $user,
             'token' => $user->createToken("API TOKEN")->plainTextToken
