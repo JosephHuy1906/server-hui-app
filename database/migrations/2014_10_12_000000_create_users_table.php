@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->text('cccd_after')->nullable();
             $table->text('cccd_before')->nullable();
+            $table->text('device_id')->nullable();
             $table->integer('user_count')->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

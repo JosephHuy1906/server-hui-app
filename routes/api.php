@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
     Route::get('users', [UserController::class, 'getAllUser']);
+    Route::get('user/{id}', [UserController::class, 'getAllUser']);
     Route::post('user/update-rank/{id}', [UserController::class, 'updateRank']);
 
 
@@ -52,6 +53,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('room/update-status/', [RoomController::class, 'updateStatusRoom']);
     Route::post('room/update-info/{id}', [RoomController::class, 'updateInfoRoom']);
     Route::get('check-user-payment/{id}', [RoomUserController::class, 'getUserRoomPayment']);
+    Route::get('check-user-not-payment/{id}', [RoomUserController::class, 'getUsersWithoutApprovedPayments']);
 
     Route::post('message/postMess', [MessageController::class, 'postMessage']);
     Route::get('message/room/{id}', [MessageController::class, 'getMessage']);

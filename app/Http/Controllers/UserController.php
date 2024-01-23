@@ -83,10 +83,6 @@ class UserController extends Controller
     public function updatePassword(Request $request, User $user)
     {
         try {
-            if ($user->id !== auth()->id()) {
-                return $this->errorResponse('Unauthorized',  401);
-            }
-
             $validator = Validator::make($request->all(), [
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|same:password',
@@ -111,12 +107,12 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'sometimes|required',
-                'email' => 'sometimes|required|email',
-                'phone' => 'sometimes|required',
-                'address' => 'sometimes|required',
-                'birthday' => 'sometimes|required',
-                'sex' => 'sometimes|required',
+                'name' => 'sometimes',
+                'email' => 'sometimes|email',
+                'phone' => 'sometimes',
+                'address' => 'sometimes',
+                'birthday' => 'sometimes',
+                'sex' => 'sometimes',
             ]);
 
             if ($validator->fails()) {
@@ -174,6 +170,19 @@ class UserController extends Controller
             return $this->successResponse('Get all user successfully',  UserResource::collection($data), 201);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
+        }
+    }
+    public function getUserByID($id)
+    {
+        try {
+
+            $user = User::find($id);
+            if (!$user) {
+                return $this->errorResponse('User không tồn tại',  404);
+            }
+            return $this->successResponse('Get all user successfully', new  UserResource($user), 201);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
 

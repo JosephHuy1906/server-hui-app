@@ -52,7 +52,6 @@ class MessageController extends Controller
 
             $messages = Message::where('room_id', $id)
                 ->get();
-            $this->checkAndUpdateRoomsStatus();
             return $this->successResponse('Get messages by room_id success', MessageResource::collection($messages), 200);
         } catch (\Throwable $err) {
             return $this->errorResponse("Server Error",  500);

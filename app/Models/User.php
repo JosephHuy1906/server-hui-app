@@ -31,6 +31,7 @@ class User extends Authenticatable  implements MustVerifyEmail, CanResetPassword
         'birthday',
         'cccd_before',
         'cccd_after',
+        'device_id'
     ];
 
     public function rooms()

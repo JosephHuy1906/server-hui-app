@@ -26,6 +26,7 @@ class RoomUserController extends Controller
             if ($validator->fails()) {
                 return $this->errorResponse('Thông tin truyền vào chưa đúng', 400);
             }
+
             $existingRecord = DB::table('room_user')
                 ->where('room_id', $request->room_id)
                 ->where('user_id', $request->user_id)
@@ -49,6 +50,9 @@ class RoomUserController extends Controller
                         ->where('user_id', $request->user_id)
                         ->delete();
 
+                    if ($request->user_id === "4bdc395e-77d4-4602-8e0f-af6bb401560f") {
+                        return $this->errorResponse('Bạn không thể xoá admin ra khỏi phòng', 400);
+                    }
                     $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi ' . $room->title, $request->room_id);
                     return $this->successResponse('Remove User for room successfully', null, 201);
                 } else {
@@ -115,17 +119,60 @@ class RoomUserController extends Controller
         return $this->successResponse("Khoá người dùng thành công", null, 201);
     }
 
+    public function unLockUser(Request $request, $id)
+    {
+        $noti = new NotificationController();
+        $room_user = RoomUser::find($id);
+
+        if (!$room_user) {
+            return $this->errorResponse('Không tìm thấy user room id', 404);
+        }
+
+        $room_user->update([
+            "status" => 'Đang hoạt động'
+        ]);
+        $noti->postNotification($room_user->user_id, "User", "Bạn đã bị khoá trong phòng hụi và không thể chơi", $room_user->room_id);
+        return $this->successResponse("Khoá người dùng thành công", null, 201);
+    }
+
     public function getUserRoomPayment($id)
     {
         $today = now()->toDateString();
+        $activeStatus = 'Đang hoạt động';
+
         $roomUser = RoomUser::where('room_id', $id)
+            ->where('user_id', '!=', '4bdc395e-77d4-4602-8e0f-af6bb401560f')
+            ->where('status', $activeStatus)
             ->with(['user', 'payments' => function ($query) use ($today) {
                 $query->whereDate('created_at', $today);
             }])
-            ->where('user_id', '!=', '4bdc395e-77d4-4602-8e0f-af6bb401560f')
-            ->where('status', 'Đang hoạt động')
             ->get();
 
-        return $this->successResponse('kiểm tra user đã thanh toán tiền hụi theo phòng', RoomUserResource::collection($roomUser), 200);
+        return $this->successResponse('Kiểm tra user đã thanh toán tiền hụi theo phòng vào ngày ' . $today, RoomUserResource::collection($roomUser), 200);
+    }
+
+    public function getUsersWithoutApprovedPayments($id)
+    {
+        $today = now()->toDateString();
+        $excludedUserId = '4bdc395e-77d4-4602-8e0f-af6bb401560f';
+
+        $usersWithoutApprovedPayments = RoomUser::where('room_id', $id)
+            ->where('status', 'Đang hoạt động')
+            ->with(['user', 'payments' => function ($query) use ($today) {
+                $query->whereDate('created_at', $today)
+                    ->whereNotIn('status', ['approved']);
+            }])
+            ->where(function ($query) use ($today) {
+                $query->orWhereHas('payments', function ($subQuery) use ($today) {
+                    $subQuery->whereDate('created_at', $today)
+                        ->whereNotIn('status', ['approved']);
+                })
+                    ->orWhereDoesntHave('payments');
+            })
+            ->whereNotIn('user_id', [$excludedUserId])
+            ->get();
+
+        return $usersWithoutApprovedPayments;
+        // return $this->successResponse('Danh sách người dùng chưa có thanh toán tiền hụi ngày ' . $today, RoomUserResource::collection($usersWithoutApprovedPayments), 200);
     }
 }

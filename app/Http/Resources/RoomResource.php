@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Models\AuctionHuiRoom;
+use App\Models\RoomUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,6 +14,8 @@ class RoomResource extends JsonResource
     public function toArray(Request $request): array
     {
         $auctionHuiRoomId = AuctionHuiRoom::where('room_id', $this->id)->get();
+        $room_user = RoomUser::where('room_id', $this->id)->get();
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -34,12 +38,19 @@ class RoomResource extends JsonResource
                 ];
             }),
             'is_near_end' => false,
-            'users' => $this->users->map(function ($user) {
+            'room_user' => $room_user->map(function ($item) {
+                $user = User::find($item->user_id);
                 return [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'avatar' => $user->avatar,
-                    'role' => $user->role,
+                    'room_user_id' => $item->id,
+                    'status' => $item->status,
+                    'user' => [
+                        'user_id' => $user->id,
+                        'name' => $user->name,
+                        'avatar' => $user->avatar,
+                        'role' => $user->role,
+                        'rank' => $user->rank,
+                        'phone' => $user->phone,
+                    ]
                 ];
             }),
 
