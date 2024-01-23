@@ -38,7 +38,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/update-cccd/{id}', [UserController::class, 'updateCCCD']);
     Route::post('/update-info/{id}', [UserController::class, 'updateInfo']);
     Route::get('users', [UserController::class, 'getAllUser']);
-    Route::get('user/{id}', [UserController::class, 'getAllUser']);
+    Route::get('user/{id}', [UserController::class, 'getUserByID']);
     Route::post('user/update-rank/{id}', [UserController::class, 'updateRank']);
 
 
