@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
-        })->everyMinute()->name('check-and-look-room')->withoutOverlapping();
+        })->everySecond()->name('check-and-look-room')->withoutOverlapping();
 
 
         $schedule->call(function () {
