@@ -6,6 +6,7 @@ use App\Http\Resources\AuctionHuiDetailResource;
 use App\Http\Resources\UserWinHuiResource;
 use App\Models\AuctionHuiDetail;
 use App\Models\AuctionHuiRoom;
+use App\Models\User;
 use App\Models\UserWinHui;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -101,6 +102,7 @@ class AuctionHuiDetailController extends Controller
             }
 
             $usersWithMaxTotalPrice = $this->getTotal($request->auction_hui_id);
+
             $responseData = $usersWithMaxTotalPrice->getData();
             if (
                 !isset($responseData->status) ||
@@ -113,7 +115,7 @@ class AuctionHuiDetailController extends Controller
             $winningBidder = $responseData->data[0];
             $total_amount_payable = $winningBidder->total_price;
             $total_money_received = $request->accumulated_amount - (($request->accumulated_amount * $request->commission_percentage) / 100);
-
+            $user = User::find($winningBidder->user->user_id);
             $addUserWin = [
                 'user_id' => $winningBidder->user->user_id,
                 'commission_percentage' => $request->commission_percentage,
@@ -131,6 +133,10 @@ class AuctionHuiDetailController extends Controller
                 'User',
                 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
                 $request->room_id
+            );
+            $this->sendNoticationApp(
+                $user->device_id,
+                'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
             );
             return $this->successResponse('Create user win hui successfully', new UserWinHuiResource($addUser), 201);
         } catch (\Throwable $err) {

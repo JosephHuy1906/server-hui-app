@@ -13,6 +13,10 @@ class AuctionHuiDetail extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function AuctionHuiRoom()
+    {
+        return $this->belongsTo(AuctionHuiRoom::class, 'auction_hui_id');
+    }
     protected $fillable = [
         'auction_hui_id',
         'user_id',

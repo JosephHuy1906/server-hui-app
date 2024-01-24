@@ -23,6 +23,7 @@ class AuctionHuiDetailResource extends JsonResource
             ],
             'auction_hui_id ' => $this->auction_hui_id,
             'starting_price' => $this->starting_price,
+            'auction_price' => $this->AuctionHuiRoom->auction_price ?? 0,
             'total_price' => $this->total_price,
             'auction_percentage' => $this->auction_percentage,
             'created_at' => $this->created_at,
