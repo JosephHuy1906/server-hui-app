@@ -29,11 +29,15 @@ class AuctionHuiDetailController extends Controller
             if ($validator->fails()) {
                 return $this->errorResponse('Thông tin truyền vào chưa đúng',  400);
             }
+            $auction = AuctionHuiRoom::find($request->auction_hui_id);
             $price_end = $this->checkPriceAuction($request->auction_hui_id);
-            if ($request->total_price <= $price_end->total_price) {
-                return $this->errorResponse('Phần trăm đấu giá phải cao hơn phần trăm đấu giá của người phía trước', 401);
+            if ($price_end && $request->total_price <= $price_end->total_price) {
+                return $this->errorResponse('Số tiền đấu giá phải cao hơn người đã đấu trước bạn', 401);
             }
             $create = AuctionHuiDetail::create($request->all());
+            $auction->update([
+                "auction_price" => $request->total_price
+            ]);
             $noti->postNotification($request->user_id, 'user', 'Bạn đã đấu giá hụi thành công', $request->room_id);
             return $this->successResponse('Bạn đã đấu giá hụi thành công', new AuctionHuiDetailResource($create), 201);
         } catch (\Throwable $th) {

@@ -17,5 +17,6 @@ class AuctionHuiRoom extends Model
         'starting_price',
         'time_end',
         'room_id',
+        'auction_price'
     ];
 }

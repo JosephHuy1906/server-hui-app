@@ -60,15 +60,15 @@ class Kernel extends ConsoleKernel
                     $totalAmountPayable = number_format($room->price_room, 0, ',', '.');
                     $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ", $room->id);
                     $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
-                    if ($user->device_id !== null) {
-                        $oneSinal->sendNoticationApp(
-                            $user->device_id,
-                            "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ"
-                        );
-                    }
+                    // if ($user->device_id !== null) {
+                    $oneSinal->sendNoticationApp(
+                        $user->device_id,
+                        "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ"
+                    );
+                    // }
                 }
             }
-        })->dailyAt("17:00")->name('end_day_payment')->withoutOverlapping();
+        })->dailyAt("08:15")->name('end_day_payment')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
 
         $schedule->call(function () {
             $notication = new NotificationController();
@@ -94,7 +94,7 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
-        })->monthlyOn(28, '17:00')->name('end_of_month_payment')->withoutOverlapping();
+        })->monthlyOn(28, '17:00')->name('end_of_month_payment')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
 
         $schedule->call(function () {
             $notication = new NotificationController();
@@ -125,7 +125,7 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
-        })->dailyAt('19:00')->name('check_payment_day')->withoutOverlapping();
+        })->dailyAt('19:00')->name('check_payment_day')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
     }
 
 

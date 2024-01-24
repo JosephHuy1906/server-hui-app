@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('auction_hui_room', function (Blueprint $table) {
             $table->id();
             $table->integer('starting_price');
+            $table->integer('auction_price')->default(0);
             $table->dateTime('time_end');
             $table->timestamps();
             $table->foreignId('room_id')->references('id')->on('rooms');

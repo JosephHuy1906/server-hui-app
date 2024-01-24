@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('total_price');
             $table->timestamps();
             $table->foreignId('auction_hui_id')->references('id')->on('auction_hui_room');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
