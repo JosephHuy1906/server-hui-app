@@ -61,12 +61,12 @@ class Kernel extends ConsoleKernel
                     $totalAmountPayable = number_format($room->price_room, 0, ',', '.');
                     $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ", $room->id);
                     $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
-                    // if ($user->device_id !== null) {
-                    $oneSinal->sendNoticationApp(
-                        $user->device_id,
-                        "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ"
-                    );
-                    // }
+                    if ($user->device_id !== null) {
+                        $oneSinal->sendNoticationApp(
+                            $user->device_id,
+                            "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ"
+                        );
+                    }
                 }
             }
         })->dailyAt("08:15")->name('end_day_payment')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
@@ -103,7 +103,7 @@ class Kernel extends ConsoleKernel
             $room_user = new RoomUserController();
             $rooms = Room::where('status', 'Lock')
                 ->get();
-            $admin = User::find('4bdc395e-77d4-4602-8e0f-af6bb401560f');
+            $admin = User::where('role', "Admin")->get();
             foreach ($rooms as $room) {
                 $check = $room_user->getUsersWithoutApprovedPayments($room->id);
                 foreach ($check as $item) {
@@ -125,13 +125,16 @@ class Kernel extends ConsoleKernel
                             "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room"
                         );
                     }
-                    Mail::send('emails.userNotPayment', compact('item', 'room'), function ($email) use ($admin, $room) {
-                        $email->to($admin->email, 'putapp')
+                }
+                foreach ($admin as $ad) {
+
+                    Mail::send('emails.userNotPayment', compact('check', 'room', 'ad'), function ($email) use ($ad, $room) {
+                        $email->to($ad->email, 'putapp')
                             ->subject('Danh sách user chưa đóng tiền hụi phòng ' . $room->title);
                     });
                 }
             }
-        })->dailyAt('19:00')->name('check_payment_day')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
+        })->dailyAt("19:00")->name('check_payment_day')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
     }
 
 

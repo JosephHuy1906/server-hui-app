@@ -24,7 +24,7 @@
         background: #fff;
         border-radius: 10px">
             <h2 style="text-align: center">Put App</h2>
-            <p>Xin chào Admin.</p>
+            <p>Xin chào Admin {{ $ad->name }}.</p>
             <p>Dưới đây là danh sách user chưa đóng tiền chơi hụi theo phòng {{ $room->title }}.</p>
             <table style="text-align: center; ">
                 <tr>
@@ -35,14 +35,16 @@
                     <th style="background: #efefef; padding: 10px; color:black">Số tiền phải đóng</th>
                     <th style="background: #efefef; padding: 10px; color:black">Trạng thái</th>
                 </tr>
-                <tr>
-                    <td style="padding: 5px">#{{ $item->user_id }}</td>
-                    <td style="padding: 5px">#{{ $item->user->name }}</td>
-                    <td style="padding: 5px">#{{ $item->user->phone }}</td>
-                    <td style="padding: 5px">#{{ $room->title }}</td>
-                    <td style="padding: 5px">{{ number_format($room->price_room, 0, ',', '.') }}đ</td>
-                    <td style="padding: 5px">Chưa thanh toán</td>
-                </tr>
+                @foreach ($check as $item)
+                    <tr>
+                        <td style="padding: 5px">#{{ $item->user_id }}</td>
+                        <td style="padding: 5px">{{ $item->user->name }}</td>
+                        <td style="padding: 5px">{{ $item->user->phone }}</td>
+                        <td style="padding: 5px">{{ $room->title }}</td>
+                        <td style="padding: 5px">{{ number_format($room->price_room, 0, ',', '.') }}đ</td>
+                        <td style="padding: 5px">Chưa thanh toán</td>
+                    </tr>
+                @endforeach
             </table>
             <div style=" margin-top: 40px;">
                 <p>Trân trọng.</p>
