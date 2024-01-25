@@ -23,13 +23,13 @@
         background: #fff;
         border-radius: 10px">
             <h2 style="text-align: center">Put App</h2>
-            <p>Hi {{ $name }}.</p>
+            <p>Xin chào {{ $name }}.</p>
             <p>Có vẻ bạn đang quên mất mật khẩu của mình. Dưới đây là mã code để bạn đặt lại mật khẩu mới.</p>
             <p>Code: <b>{{ $code }}</b></p>
-            <div style=" margin-top: 100px;">
+            <div style=" margin-top: 40px;">
                 <p>Trân trọng.</p>
                 <p style="
-            font-style: italic">The Put Team.</p>
+            font-style: italic; margin-top: -10px;">The Put Team.</p>
             </div>
         </div>
     </div>

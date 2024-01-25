@@ -12,6 +12,7 @@ use App\Models\RoomUser;
 use App\Models\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Mail;
 
 class Kernel extends ConsoleKernel
 {
@@ -102,6 +103,7 @@ class Kernel extends ConsoleKernel
             $room_user = new RoomUserController();
             $rooms = Room::where('status', 'Lock')
                 ->get();
+            $admin = User::find('4bdc395e-77d4-4602-8e0f-af6bb401560f');
             foreach ($rooms as $room) {
                 $check = $room_user->getUsersWithoutApprovedPayments($room->id);
                 foreach ($check as $item) {
@@ -123,6 +125,10 @@ class Kernel extends ConsoleKernel
                             "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room"
                         );
                     }
+                    Mail::send('emails.userNotPayment', compact('item', 'room'), function ($email) use ($admin, $room) {
+                        $email->to($admin->email, 'putapp')
+                            ->subject('Danh sách user chưa đóng tiền hụi phòng ' . $room->title);
+                    });
                 }
             }
         })->dailyAt('19:00')->name('check_payment_day')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');

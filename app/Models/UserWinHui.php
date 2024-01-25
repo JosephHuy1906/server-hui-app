@@ -14,6 +14,10 @@ class UserWinHui extends Model
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     protected $fillable = [
         'id',
         'user_id',
@@ -21,7 +25,8 @@ class UserWinHui extends Model
         'price_pay_hui',
         'total_auction',
         'room_id',
-        'status',
+        'status_user',
+        'status_admin',
         'total_money_received',
         'total_amount_payable',
     ];

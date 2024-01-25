@@ -88,7 +88,7 @@ class AuctionHuiDetailController extends Controller
     public function postUserWin(Request $request)
     {
         try {
-
+            $auction = new AuctionHuiRoomController();
             $notication = new NotificationController();
             $validator = Validator::make($request->all(), [
                 'room_id' => 'required',
@@ -102,6 +102,10 @@ class AuctionHuiDetailController extends Controller
             }
 
             $usersWithMaxTotalPrice = $this->getTotal($request->auction_hui_id);
+            if (!$usersWithMaxTotalPrice) {
+                $auction->removeAuctionHui($request->auction_hui_id);
+                return $this->successResponse('Phòng đấu hụi đã kết thúc', null, 201);
+            }
 
             $responseData = $usersWithMaxTotalPrice->getData();
             if (

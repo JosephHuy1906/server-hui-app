@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserWinHui;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -155,7 +156,7 @@ class CheckoutController extends Controller
             $data = [
                 "orderCode" => $oderID,
                 "amount" => $request->amount,
-                "description" => $request->description,
+                "description" => "Thanh toán hoá đơn",
                 "returnUrl" => $baseUrl . "/success",
                 "cancelUrl" => $baseUrl . "/cancel"
             ];
@@ -194,7 +195,7 @@ class CheckoutController extends Controller
                 201
             );
         } catch (\Throwable $th) {
-            return $this->errorResponse("Server Error",  500);
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
 
@@ -313,6 +314,10 @@ class CheckoutController extends Controller
                         'Bạn đã đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date . ' Thành công'
                     );
                 }
+                Mail::send('emails.paymentAuction', compact('checkout', 'data'), function ($email) use ($data) {
+                    $email->to($data->email, 'putapp')
+                        ->subject('Thanh toán tiền phòng hụi ');
+                });
                 return view('successRoom');
             }
         } catch (\Throwable $th) {
@@ -352,6 +357,11 @@ class CheckoutController extends Controller
                         'Bạn vẫn chưa đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date,
                     );
                 }
+
+                Mail::send('emails.paymentAuction', compact('checkout', 'data'), function ($email) use ($data) {
+                    $email->to($data->email, 'putapp')
+                        ->subject('Thanh toán tiền phòng hụi ');
+                });
                 return view('cancelRoom');
             }
         } catch (\Throwable $th) {
@@ -374,9 +384,10 @@ class CheckoutController extends Controller
             $find = UserWinHui::find($checkout->user_win_hui_id);
             $room = Room::find($checkout->room_id);
             $data = User::find($find->user_id);
+            $admin = User::where('role', 'Admin')->get();
             if ($find) {
                 $find->update([
-                    'status' => 'approved'
+                    'status_user' => 'approved'
                 ]);
                 $room->update([
                     'accumulated_amount' => 0
@@ -401,6 +412,17 @@ class CheckoutController extends Controller
                         'Bạn đã thanh toán ' . $totalAmountPayable . 'đ'
                     );
                 }
+                foreach ($admin as $ad) {
+                    Mail::send('emails.paymentAuctionAdmin', compact('checkout', 'data'), function ($email) use ($ad) {
+                        $email->to($ad->email, 'putapp')
+                            ->subject('Hoá đơn thanh toán của hội viên');
+                    });
+                }
+
+                Mail::send('emails.paymentAuction', compact('checkout', 'data'), function ($email) use ($data) {
+                    $email->to($data->email, 'putapp')
+                        ->subject('Thanh toán tiền đấu giá hụi');
+                });
             }
 
             return view('success');
@@ -416,22 +438,23 @@ class CheckoutController extends Controller
             $checkout = Checkout::find($orderCode);
             $notication = new NotificationController();
             if ($checkout->status === 'rejected') {
-                return;
+                return view('cancel');
             }
             $checkout->update([
                 'status' => 'rejected'
             ]);
             $find = UserWinHui::find($checkout->user_win_hui_id);
             $data = User::find($find->user_id);
+            $admin = User::where('role', 'Admin')->get();
             if ($find) {
                 $find->update([
-                    'status' => 'rejected'
+                    'status_user' => 'rejected'
                 ]);
                 $totalAmountPayable = number_format($checkout->price, 0, ',', '.');
                 $notication->postNotification(
                     $checkout->user_id,
                     'User',
-                    'Bạn đã huỷ hoá đơn ' . $totalAmountPayable . 'đ ',
+                    'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ ',
                     $find->room_id
                 );
                 $notication->postNotification(
@@ -443,14 +466,25 @@ class CheckoutController extends Controller
                 if ($data->device_id !== null) {
                     $this->sendNoticationApp(
                         $data->device_id,
-                        'User ' . $checkout->user_id . ' đã huỷ hoá đơn' . $totalAmountPayable . 'đ ',
+                        'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ ',
                     );
                 }
+                foreach ($admin as $ad) {
+                    Mail::send('emails.paymentAuctionAdmin', compact('checkout', 'data'), function ($email) use ($ad) {
+                        $email->to($ad->email, 'putapp')
+                            ->subject('Hoá đơn thanh toán của hội viên');
+                    });
+                }
+
+                Mail::send('emails.paymentAuction', compact('checkout', 'data'), function ($email) use ($data) {
+                    $email->to($data->email, 'putapp')
+                        ->subject('Thanh toán tiền đấu giá hụi');
+                });
             }
 
             return view('cancel');
-        } catch (\Throwable $e) {
-            return $this->errorResponse('Server Error',  500);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
 

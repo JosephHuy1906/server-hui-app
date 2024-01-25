@@ -106,6 +106,13 @@ class RoomUserController extends Controller
     public function updateStatusUser(Request $request, $id)
     {
         $noti = new NotificationController();
+        $validator = Validator::make($request->all(), [
+            'status' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Thông tin truyền vào chưa đúng', 400);
+        }
         $room_user = RoomUser::find($id);
         $room = Room::find($room_user->room_id);
         $user = User::find($room_user->user_id);
@@ -114,21 +121,23 @@ class RoomUserController extends Controller
         }
 
         $room_user->update([
-            "status" => 'Đã bị khoá'
+            "status" => $request->status
         ]);
-        $noti->postNotification(
-            $room_user->user_id,
-            "User",
-            "Bạn đã bị khoá trong phòng hụi và không thể chơi",
-            $room_user->room_id
-        );
-        if ($user->device_id !== null) {
-            $this->sendNoticationApp(
-                $user->device_id,
-                "Bạn đã bị khoá trong phòng " . $room->title . " và không thể chơi"
+        if ($request->status === "Đã bị khoá") {
+            $noti->postNotification(
+                $room_user->user_id,
+                "User",
+                "Bạn đã bị khoá trong phòng hụi và không thể chơi",
+                $room_user->room_id
             );
+            if ($user->device_id !== null) {
+                $this->sendNoticationApp(
+                    $user->device_id,
+                    "Bạn đã bị khoá trong phòng " . $room->title . " và không thể chơi"
+                );
+            }
         }
-        return $this->successResponse("Khoá người dùng thành công", null, 201);
+        return $this->successResponse("Cập nhập trạng thái người chơi thành công", new RoomUserResource($room_user), 201);
     }
 
     public function unLockUser($id)
