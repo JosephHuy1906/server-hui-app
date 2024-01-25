@@ -18,7 +18,7 @@ class UserWinHuiController extends Controller
             $user = User::find($find->user_id);
             if (!$find)  return $this->errorResponse("User chiến thắng không tồn tại",  404);
             $find->update([
-                'status' => 'approved'
+                'status_admin' => 'approved'
             ]);
             $notication->postNotification(
                 $find->user_id,
@@ -40,7 +40,7 @@ class UserWinHuiController extends Controller
     {
         try {
             $validate = Validator::make($request->all(), [
-                'status' => 'required',
+                'status_admin' => 'required',
             ]);
 
             if ($validate->fails()) {
@@ -51,7 +51,7 @@ class UserWinHuiController extends Controller
             $user = User::find($find->user_id);
             if (!$find)  return $this->errorResponse("User chiến thắng không tồn tại",  404);
             $find->update([
-                'status' => $request->status
+                'status_admin' => $request->status
             ]);
             $notication->postNotification(
                 $find->user_id,

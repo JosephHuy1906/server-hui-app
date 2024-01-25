@@ -23,10 +23,11 @@ class BankAccounResource extends JsonResource
             ],
             'number_bank' => $this->number_bank,
             'code' =>  $this->code,
+            'logo' =>  $this->logo,
+            'name' =>  $this->name,
             'short_name' => $this->short_name,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
-
     }
 }

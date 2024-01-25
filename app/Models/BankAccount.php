@@ -19,5 +19,7 @@ class BankAccount extends Model
         'short_name',
         'number_bank',
         'code',
+        'logo',
+        'name',
     ];
 }

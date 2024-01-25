@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('short_name');
             $table->string('number_bank');
             $table->string('code');
+            $table->string('logo');
+            $table->string('name');
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

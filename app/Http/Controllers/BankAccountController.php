@@ -21,6 +21,8 @@ class BankAccountController extends Controller
                     'number_bank' => 'required',
                     'code' => 'required',
                     'user_id' => 'required',
+                    'logo' => 'required',
+                    'name' => 'required',
                 ]
             );
             if ($validate->fails()) {
@@ -31,9 +33,9 @@ class BankAccountController extends Controller
                 return $this->errorResponse('Tài khoản người dùng không đúng', 404);
             }
             $addBank = BankAccount::create($request->all());
-            return $this->successResponse("Thêm tài khoản ngân hàng thành công", BankAccounResource::collection($addBank), 201);
+            return $this->successResponse("Thêm tài khoản ngân hàng thành công", new BankAccounResource($addBank), 201);
         } catch (\Throwable $th) {
-            return $this->errorResponse($th->getMessage(),  500);
+            return $this->errorResponse("error server",  500);
         }
     }
 
