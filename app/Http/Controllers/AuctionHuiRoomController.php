@@ -6,6 +6,8 @@ use App\Http\Resources\AuctionHuiRoomResource;
 use App\Models\AuctionHuiDetail;
 use App\Models\AuctionHuiRoom;
 use App\Models\Room;
+use App\Models\RoomUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -29,6 +31,8 @@ class AuctionHuiRoomController extends Controller
                 return $this->errorResponse("Thông tin truyền vào chưa đúng",  400);
             }
             $room = Room::find($request->room_id);
+            $room_user = RoomUser::where('room_id', $request->room_id)
+                ->where('status', 'Đang hoạt động')->get();
             $roomAuction = AuctionHuiRoom::where('room_id', $request->room_id)->first();
             if (!$room) {
                 return $this->errorResponse('Phòng hụi không tồn tại',  404);
@@ -38,6 +42,13 @@ class AuctionHuiRoomController extends Controller
             }
 
             $auction = AuctionHuiRoom::create($request->all());
+            foreach ($room_user as $us) {
+                $user = User::find($us->user_id);
+                $this->sendNoticationApp(
+                    $user->device_id,
+                    'Phòng ' . $room->title . ' đã bắt đầu đấu giá hụi vui lòng vào app để đấu giá. Thời gian kết thúc đấu giá vào lúc ' . $request->time_end
+                );
+            }
             return $this->successResponse("Phòng đấu giá hui đã tạo", new AuctionHuiRoomResource($auction), 201);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(),  500);
