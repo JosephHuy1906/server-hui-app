@@ -14,15 +14,16 @@
     width: 100%;
     height: 100%;
     background: gray;
-    padding: 10px;
     color: black
     ">
         <div class="test-mail"
-            style=" width: 60%;
-        padding: 15px;
+            style="
+        width: 90%; 
+        padding: 10px;
         margin: 0 auto;
         background: #fff;
-        border-radius: 10px">
+        border-radius: 10px;
+      ">
             <h2 style="text-align: center">Put App</h2>
             <p>Xin chào Admin {{ $ad->name }}.</p>
             <p>Dưới đây là danh sách user chưa đóng tiền chơi hụi theo phòng {{ $room->title }}.</p>
@@ -30,19 +31,17 @@
                 <tr>
                     <th style="background: #efefef; padding: 10px; color:black">ID khách hàng</th>
                     <th style="background: #efefef; padding: 10px; color:black">Tên khách hàng</th>
-                    <th style="background: #efefef; padding: 10px; color:black">Số điện thoại khách hàng</th>
                     <th style="background: #efefef; padding: 10px; color:black">Tên phòng</th>
                     <th style="background: #efefef; padding: 10px; color:black">Số tiền phải đóng</th>
                     <th style="background: #efefef; padding: 10px; color:black">Trạng thái</th>
                 </tr>
                 @foreach ($check as $item)
                     <tr>
-                        <td style="padding: 5px">#{{ $item->user_id }}</td>
-                        <td style="padding: 5px">{{ $item->user->name }}</td>
-                        <td style="padding: 5px">{{ $item->user->phone }}</td>
-                        <td style="padding: 5px">{{ $room->title }}</td>
-                        <td style="padding: 5px">{{ number_format($room->price_room, 0, ',', '.') }}đ</td>
-                        <td style="padding: 5px">Chưa thanh toán</td>
+                        <td>{{ $item->user_id }}</td>
+                        <td>{{ $item->user->name }}</td>
+                        <td>{{ $room->title }}</td>
+                        <td>{{ number_format($room->price_room, 0, ',', '.') }}đ</td>
+                        <td>Chưa thanh toán</td>
                     </tr>
                 @endforeach
             </table>

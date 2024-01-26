@@ -19,9 +19,47 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      */
+
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            $notication = new NotificationController();
+            $oneSinal = new OneSinalController();
+            $room_user = new RoomUserController();
+            $rooms = Room::where('status', 'Lock')
+                ->get();
+            $admin = User::where('role', "Admin")->get();
+            foreach ($rooms as $room) {
+                $check = $room_user->getUsersWithoutApprovedPayments($room->id);
+                foreach ($check as $item) {
+                    $notication->postNotification(
+                        $item->user_id,
+                        'User',
+                        "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room",
+                        $room->id
+                    );
+                    $notication->postNotification(
+                        $item->user_id,
+                        'Admin',
+                        "User " . $item->user_id . ". Đã quá thời gian và chưa thanh toán tiền hụi phòng " . $room->title,
+                        $room->id
+                    );
+                    if ($item->user->device_id !== null) {
+                        $oneSinal->sendNoticationApp(
+                            $item->user->device_id,
+                            "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room"
+                        );
+                    }
+                }
+                foreach ($admin as $ad) {
+
+                    Mail::send('emails.userNotPayment', compact('check', 'room', 'ad'), function ($email) use ($ad, $room) {
+                        $email->to($ad->email, 'putapp')
+                            ->subject('Danh sách user chưa đóng tiền hụi phòng ' . $room->title);
+                    });
+                }
+            }
+        })->dailyAt("19:00")->name('check_payment_day')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
 
         $schedule->call(function () {
             $notication = new NotificationController();
@@ -42,7 +80,7 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
-        })->everySecond()->name('check-and-look-room')->withoutOverlapping();
+        })->everyMinute()->name('check-and-look-room')->withoutOverlapping();
 
 
         $schedule->call(function () {
@@ -96,45 +134,6 @@ class Kernel extends ConsoleKernel
                 }
             }
         })->monthlyOn(28, '17:00')->name('end_of_month_payment')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
-
-        $schedule->call(function () {
-            $notication = new NotificationController();
-            $oneSinal = new OneSinalController();
-            $room_user = new RoomUserController();
-            $rooms = Room::where('status', 'Lock')
-                ->get();
-            $admin = User::where('role', "Admin")->get();
-            foreach ($rooms as $room) {
-                $check = $room_user->getUsersWithoutApprovedPayments($room->id);
-                foreach ($check as $item) {
-                    $notication->postNotification(
-                        $item->user_id,
-                        'User',
-                        "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room",
-                        $room->id
-                    );
-                    $notication->postNotification(
-                        $item->user_id,
-                        'Admin',
-                        "User " . $item->user_id . ". Đã quá thời gian và chưa thanh toán tiền hụi phòng " . $room->title,
-                        $room->id
-                    );
-                    if ($item->user->device_id !== null) {
-                        $oneSinal->sendNoticationApp(
-                            $item->user->device_id,
-                            "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room"
-                        );
-                    }
-                }
-                foreach ($admin as $ad) {
-
-                    Mail::send('emails.userNotPayment', compact('check', 'room', 'ad'), function ($email) use ($ad, $room) {
-                        $email->to($ad->email, 'putapp')
-                            ->subject('Danh sách user chưa đóng tiền hụi phòng ' . $room->title);
-                    });
-                }
-            }
-        })->dailyAt("19:00")->name('check_payment_day')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
     }
 
 
