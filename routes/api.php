@@ -28,7 +28,6 @@ Route::post('forget-pass', [UserController::class, 'forgetPassword']);
 
 
 Route::get('images/users/{filename}', [ImageController::class, 'getImageUser'])->name('images.get');
-Route::get('images/products/{filename}', [ImageController::class, 'getImageProduct'])->name('images.get');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('profile', [AuthController::class, 'profile']);
