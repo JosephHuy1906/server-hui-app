@@ -29,11 +29,11 @@
             <p>Dưới đây là danh sách user chưa đóng tiền chơi hụi theo phòng {{ $room->title }}.</p>
             <table style="text-align: center; ">
                 <tr>
-                    <th style="background: #efefef; padding: 10px; color:black">ID khách hàng</th>
-                    <th style="background: #efefef; padding: 10px; color:black">Tên khách hàng</th>
-                    <th style="background: #efefef; padding: 10px; color:black">Tên phòng</th>
-                    <th style="background: #efefef; padding: 10px; color:black">Số tiền phải đóng</th>
-                    <th style="background: #efefef; padding: 10px; color:black">Trạng thái</th>
+                    <th style="background: #efefef; padding: 5px; color:black">ID khách hàng</th>
+                    <th style="background: #efefef; padding: 5px; color:black">Tên khách hàng</th>
+                    <th style="background: #efefef; padding: 5px; color:black">Tên phòng</th>
+                    <th style="background: #efefef; padding: 5px; color:black">Số tiền phải đóng</th>
+                    <th style="background: #efefef; padding: 5px; color:black">Trạng thái</th>
                 </tr>
                 @foreach ($check as $item)
                     <tr>
