@@ -72,7 +72,7 @@ class UserWinHuiController extends Controller
     public function getHuiByUser($id)
     {
         try {
-            $data = UserWinHui::where('user_id', $id)->get();
+            $data = UserWinHui::where('user_id', $id)->orderBy('id', 'desc')->get();
 
             return $this->successResponse('Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);
         } catch (\Throwable $th) {

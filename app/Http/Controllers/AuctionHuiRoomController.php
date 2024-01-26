@@ -17,7 +17,7 @@ class AuctionHuiRoomController extends Controller
     public function createAuctionHui(Request $request)
     {
         try {
-
+            $notication = new NotificationController();
             $valida = Validator::make(
                 $request->all(),
                 [
@@ -47,6 +47,12 @@ class AuctionHuiRoomController extends Controller
                 $this->sendNoticationApp(
                     $user->device_id,
                     'Phòng ' . $room->title . ' đã bắt đầu đấu giá hụi vui lòng vào app để đấu giá. Thời gian kết thúc đấu giá vào lúc ' . $request->time_end
+                );
+                $notication->postNotification(
+                    $user->id,
+                    'User',
+                    'Phòng Hụi ' . $room->title . '  đã bắt đầu đấu giá hụi vui lòng vào app để đấu giá. Thời gian kết thúc đấu giá vào lúc ' . $request->time_end,
+                    $room->id
                 );
             }
             return $this->successResponse("Phòng đấu giá hui đã tạo", new AuctionHuiRoomResource($auction), 201);

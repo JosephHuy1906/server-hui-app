@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('notification', function (Blueprint $table) {
             $table->id();
             $table->uuid('user_id');
-            $table->unsignedBigInteger('room_id')->nullable();
             $table->enum('status', ['user', 'admin']);
+            $table->foreignId('room_id')->references('id')->on('rooms');
             $table->text('description');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('room_id')->references('id')->on('rooms');
             $table->timestamps();
         });
     }

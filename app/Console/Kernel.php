@@ -107,7 +107,7 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
-        })->dailyAt("08:15")->name('end_day_payment')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
+        })->dailyAt("17:00")->name('end_day_payment')->withoutOverlapping()->timezone('Asia/Ho_Chi_Minh');
 
         $schedule->call(function () {
             $notication = new NotificationController();
