@@ -26,7 +26,7 @@
       ">
             <h2 style="text-align: center">Put App</h2>
             <p>Xin chào Admin {{ $ad->name }}.</p>
-            <p>Dưới đây là danh sách user chưa đóng tiền chơi hụi theo phòng {{ $room->title }}.</p>
+            <p>Dưới đây là danh sách user chưa đóng tiền chơi hụi theo phòng {{ $room->title }} trong ngày hôm nay.</p>
             <table style="text-align: center; ">
                 <tr>
                     <th style="background: #efefef; padding: 5px; color:black">ID khách hàng</th>
