@@ -34,7 +34,7 @@ class CheckoutController extends Controller
             if (!$user) {
                 return $this->errorResponse('Tài khoản người dùng không đúng', 404);
             }
-            $data = Checkout::where('user_id', $userId)->get();
+            $data = Checkout::where('user_id', $userId)->orderBy('id', 'desc')->get();
             return $this->successResponse('Lấy danh sách checkout theo user thành công', CheckoutResource::collection($data), 200);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
@@ -340,11 +340,9 @@ class CheckoutController extends Controller
                 $payment->update([
                     'status' => 'rejected'
                 ]);
-                $checkout->update([
-                    'status' => 'rejected'
-                ]);
-
-
+                // $checkout->update([
+                //     'status' => 'rejected'
+                // ]);
                 $notication->postNotification(
                     $user->user_id,
                     'User',
@@ -445,16 +443,20 @@ class CheckoutController extends Controller
             ]);
             $find = UserWinHui::find($checkout->user_win_hui_id);
             $data = User::find($find->user_id);
+            $room = Room::find($find->room_id);
             $admin = User::where('role', 'Admin')->get();
             if ($find) {
-                $find->update([
-                    'status_user' => 'rejected'
-                ]);
+                // $find->update([
+                //     'status_user' => 'rejected'
+                // ]);
+                // $room->update([
+                //     'accumulated_amount' => $find->total_auction
+                // ]);
                 $totalAmountPayable = number_format($checkout->price, 0, ',', '.');
                 $notication->postNotification(
                     $checkout->user_id,
                     'User',
-                    'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ ',
+                    'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ vui lòng thanh toán lại để nhận tiền đấu giá.',
                     $find->room_id
                 );
                 $notication->postNotification(
@@ -466,19 +468,19 @@ class CheckoutController extends Controller
                 if ($data->device_id !== null) {
                     $this->sendNoticationApp(
                         $data->device_id,
-                        'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ ',
+                        'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ vui lòng thanh toán lại để nhận tiền đấu giá.',
                     );
                 }
                 foreach ($admin as $ad) {
                     Mail::send('emails.paymentAuctionAdmin', compact('checkout', 'data'), function ($email) use ($ad) {
                         $email->to($ad->email, 'putapp')
-                            ->subject('Hoá đơn thanh toán của hội viên');
+                            ->subject('Hoá đơn thanh toán đấu giá hụi của hội viên đã huỷ');
                     });
                 }
 
                 Mail::send('emails.paymentAuction', compact('checkout', 'data'), function ($email) use ($data) {
                     $email->to($data->email, 'putapp')
-                        ->subject('Thanh toán tiền đấu giá hụi');
+                        ->subject('Hủy thanh toán tiền đấu giá hụi');
                 });
             }
 

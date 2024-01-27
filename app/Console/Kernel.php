@@ -2,11 +2,13 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\AuctionHuiDetailController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneSinalController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomUserController;
+use App\Models\AuctionHuiRoom;
 use App\Models\Room;
 use App\Models\RoomUser;
 use App\Models\User;
@@ -16,9 +18,6 @@ use Illuminate\Support\Facades\Mail;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
 
     protected function schedule(Schedule $schedule): void
     {
@@ -82,6 +81,25 @@ class Kernel extends ConsoleKernel
             }
         })->everyMinute()->name('check-and-look-room')->withoutOverlapping();
 
+        $schedule->call(function () {
+            $auctonDetail = new AuctionHuiDetailController();
+            $auction = AuctionHuiRoom::all();
+            if (count($auction) > 0) {
+                foreach ($auction as $item) {
+                    $room = Room::find($item->room_id);
+                    $timeEnd = \Carbon\Carbon::parse($item->time_end);
+                    $now = now()->setTimezone('Asia/Ho_Chi_Minh');
+                    if ($timeEnd->gte($now)) {
+                        $auctonDetail->postUserWinServer(
+                            $item->room_id,
+                            $item->id,
+                            $room->accumulated_amount,
+                            $room->commission_percentage
+                        );
+                    }
+                }
+            }
+        })->everyMinute()->name('check-time-end-auction')->withoutOverlapping();
 
         $schedule->call(function () {
             $notication = new NotificationController();

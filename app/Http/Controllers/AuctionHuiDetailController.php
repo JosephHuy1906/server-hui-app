@@ -6,6 +6,7 @@ use App\Http\Resources\AuctionHuiDetailResource;
 use App\Http\Resources\UserWinHuiResource;
 use App\Models\AuctionHuiDetail;
 use App\Models\AuctionHuiRoom;
+use App\Models\Room;
 use App\Models\User;
 use App\Models\UserWinHui;
 use Illuminate\Http\Request;
@@ -143,6 +144,82 @@ class AuctionHuiDetailController extends Controller
                 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
             );
             return $this->successResponse('Create user win hui successfully', new UserWinHuiResource($addUser), 201);
+        } catch (\Throwable $err) {
+            return $this->errorResponse("Server Error",  500);
+        }
+    }
+    public function postUserWinServer($room_id, $auction_hui_id, $accumulated_amount, $commission_percentage)
+    {
+        try {
+            $auction = new AuctionHuiRoomController();
+            $notication = new NotificationController();
+            $usersWithMaxTotalPrice = $this->getTotal($auction_hui_id);
+
+            $responseData = $usersWithMaxTotalPrice->getData();
+
+            $winningBidder = $responseData->data[0];
+            $total_amount_payable = $winningBidder->total_price;
+            $total_money_received = $accumulated_amount - (($accumulated_amount * $commission_percentage) / 100);
+            $user = User::find($winningBidder->user->user_id);
+            $room = Room::find($room_id);
+            if (!$usersWithMaxTotalPrice) {
+                $auction->removeAuctionHui($auction_hui_id);
+                $notication->postNotification(
+                    $winningBidder->user->user_id,
+                    'User',
+                    'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                    $room_id
+                );
+                $this->sendNoticationApp(
+                    $user->device_id,
+                    'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                );
+                return;
+            }
+            if (
+                !isset($responseData->status) ||
+                !isset($responseData->success) ||
+                $responseData->status != 200 ||
+                !$responseData->success
+            ) {
+                $auction->removeAuctionHui($auction_hui_id);
+                $notication->postNotification(
+                    $winningBidder->user->user_id,
+                    'User',
+                    'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                    $room_id
+                );
+                $this->sendNoticationApp(
+                    $user->device_id,
+                    'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                );
+                return;
+            }
+
+            $addUserWin = [
+                'user_id' => $winningBidder->user->user_id,
+                'commission_percentage' => $commission_percentage,
+                'price_pay_hui' => $winningBidder->total_price,
+                'total_auction' => $accumulated_amount,
+                'room_id' => $room_id,
+                'total_amount_payable' => $total_amount_payable,
+                'total_money_received' => $total_money_received,
+            ];
+
+            UserWinHui::create($addUserWin);
+            $totalAmountPayable = number_format($total_money_received, 0, ',', '.');
+            $notication->postNotification(
+                $winningBidder->user->user_id,
+                'User',
+                'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
+                $room_id
+            );
+            $this->sendNoticationApp(
+                $user->device_id,
+                'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
+            );
+            $auction->removeAuctionHui($auction_hui_id);
+            return;
         } catch (\Throwable $err) {
             return $this->errorResponse("Server Error",  500);
         }
