@@ -18,7 +18,7 @@
     color: black
     ">
         <div class="test-mail"
-            style=" width: 60%;
+            style=" width: 90%;
         padding: 15px;
         margin: 0 auto;
         background: #fff;

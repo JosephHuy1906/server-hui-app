@@ -18,7 +18,7 @@
     color: black
     ">
         <div class="test-mail"
-            style=" width: 60%;
+            style=" width: 90%;
         padding: 15px;
         margin: 0 auto;
         background: #fff;
@@ -32,7 +32,6 @@
                     <th style="background: #efefef; padding: 10px; color:black">ID khách hàng</th>
                     <th style="background: #efefef; padding: 10px; color:black">Tên khách hàng</th>
                     <th style="background: #efefef; padding: 10px; color:black">Số điện thoại khách hàng</th>
-                    <th style="background: #efefef; padding: 10px; color:black">Mã hoá đơn</th>
                     <th style="background: #efefef; padding: 10px; color:black">Số tiền thanh toán</th>
                     <th style="background: #efefef; padding: 10px; color:black">Trạng thái thanh toán</th>
                     <th style="background: #efefef; padding: 10px; color:black">Ngày thanh toán</th>

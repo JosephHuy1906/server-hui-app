@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
                     $notication->postNotification(
                         $item->user_id,
                         'User',
-                        "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room",
+                        "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong phòng " . $room->title,
                         $room->id
                     );
                     $notication->postNotification(
@@ -46,7 +46,7 @@ class Kernel extends ConsoleKernel
                     if ($item->user->device_id !== null) {
                         $oneSinal->sendNoticationApp(
                             $item->user->device_id,
-                            "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong room"
+                            "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong  phòng " . $room->title
                         );
                     }
                 }

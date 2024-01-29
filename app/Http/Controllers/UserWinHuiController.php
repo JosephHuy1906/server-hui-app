@@ -112,13 +112,13 @@ class UserWinHuiController extends Controller
     {
 
         $data = UserWinHui::where('user_id', $userId)
-            ->where('status', 'approved')
+            ->where('status_user', 'approved')
             ->get();
         if ($data->isEmpty()) {
             return $this->errorResponse("User không tồn tại hoặc không có dữ liệu liên quan",  404);
         }
         $totals = [];
-        $totalProfit = 0; // Initialize total profit
+        $totalProfit = 0; 
         $totalAmountPayable = 0;
         foreach ($data as $item) {
             $roomId = $item->room_id;
