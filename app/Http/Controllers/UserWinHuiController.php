@@ -154,7 +154,7 @@ class UserWinHuiController extends Controller
     public function getAll()
     {
         try {
-            $data = UserWinHui::all();
+            $data = UserWinHui::orderBy('id', 'desc')->get();
             return $this->successResponse('Tất cả  Danh sách đấu hụi thành công', UserWinHuiResource::collection($data), 200);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);

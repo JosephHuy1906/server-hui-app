@@ -20,12 +20,13 @@ class CheckoutController extends Controller
     public function getAll()
     {
         try {
-            $data = Checkout::all();
+            $data = Checkout::orderBy('created_at', 'desc')->get();
             return $this->successResponse('Tất cả Danh sách checkout thành công', CheckoutResource::collection($data), 200);
         } catch (\Throwable $th) {
             return $this->errorResponse("Server Error",  500);
         }
     }
+
     public function getByUser($userId)
     {
         try {
