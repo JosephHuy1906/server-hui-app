@@ -50,23 +50,27 @@ class UserWinHuiController extends Controller
             $find = UserWinHui::find($id);
             $user = User::find($find->user_id);
             if (!$find)  return $this->errorResponse("User chiến thắng không tồn tại",  404);
-            $find->update([
-                'status_admin' => $request->status
-            ]);
-            $notication->postNotification(
-                $find->user_id,
-                "User",
-                'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
-                $find->room_id
-            );
-            if ($user->device_id !== null) {
-                $this->sendNoticationApp(
-                    $user->device_id,
-                    'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.'
+            if ($request->status_admin === 'approved') {
+
+                $find->update([
+                    'status_admin' => $request->status_admin
+                ]);
+                $notication->postNotification(
+                    $find->user_id,
+                    "User",
+                    'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
+                    $find->room_id
                 );
+                if ($user->device_id !== null) {
+                    $this->sendNoticationApp(
+                        $user->device_id,
+                        'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.'
+                    );
+                }
             }
+            return $this->successResponse('Cập nhập trạng thái hoá đơn thành công', new UserWinHuiResource($find), 200);
         } catch (\Throwable $th) {
-            return $this->errorResponse("Server Error",  500);
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
     public function getHuiByUser($id)
@@ -118,7 +122,7 @@ class UserWinHuiController extends Controller
             return $this->errorResponse("User không tồn tại hoặc không có dữ liệu liên quan",  404);
         }
         $totals = [];
-        $totalProfit = 0; 
+        $totalProfit = 0;
         $totalAmountPayable = 0;
         foreach ($data as $item) {
             $roomId = $item->room_id;
