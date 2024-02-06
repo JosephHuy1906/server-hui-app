@@ -147,10 +147,10 @@ class AuctionHuiDetailController extends Controller
                 "payment_auction"
             );
 
-            $this->sendNoticationApp(
+            $this->pushNoticationApp(
                 $user->device_id,
                 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
-                "payment_auction"
+
             );
             return $this->successResponse('Create user win hui successfully', new UserWinHuiResource($addUser), 201);
         } catch (\Throwable $err) {
@@ -181,10 +181,9 @@ class AuctionHuiDetailController extends Controller
                     "room_all"
                 );
 
-                $this->sendNoticationApp(
+                $this->pushNoticationApp(
                     $user->device_id,
                     'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
-                    "room_all"
                 );
                 return;
             }
@@ -203,10 +202,10 @@ class AuctionHuiDetailController extends Controller
                     "room_all"
                 );
 
-                $this->sendNoticationApp(
+                $this->pushNoticationApp(
                     $user->device_id,
                     'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
-                    "room_all"
+
                 );
                 return;
             }
@@ -231,10 +230,10 @@ class AuctionHuiDetailController extends Controller
                 "payment_auction"
             );
 
-            $this->sendNoticationApp(
+            $this->pushNoticationApp(
                 $user->device_id,
                 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
-                "payment_auction"
+
             );
             $auction->removeAuctionHui($auction_hui_id);
             return;

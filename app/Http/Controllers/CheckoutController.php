@@ -331,10 +331,10 @@ class CheckoutController extends Controller
                 );
                 if ($data->device_id !== null) {
 
-                    $this->sendNoticationApp(
+                    $this->pushNoticationApp(
                         $data->device_id,
                         'Bạn đã đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date . ' Thành công',
-                        "payment_room"
+
                     );
                 }
                 Mail::send('emails.paymentAuction', compact('checkout', 'data'), function ($email) use ($data) {
@@ -375,10 +375,10 @@ class CheckoutController extends Controller
                 );
                 if ($data->device_id !== null) {
 
-                    $this->sendNoticationApp(
+                    $this->pushNoticationApp(
                         $data->device_id,
                         'Bạn vẫn chưa đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date,
-                        "payment_room"
+
                     );
                 }
 
@@ -434,10 +434,10 @@ class CheckoutController extends Controller
                 );
                 if ($data->device_id !== null) {
 
-                    $this->sendNoticationApp(
+                    $this->pushNoticationApp(
                         $data->device_id,
                         'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
-                        "payment_room"
+
                     );
                 }
                 foreach ($admin as $ad) {
@@ -499,10 +499,10 @@ class CheckoutController extends Controller
                 );
                 if ($data->device_id !== null) {
 
-                    $this->sendNoticationApp(
+                    $this->pushNoticationApp(
                         $data->device_id,
                         'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ vui lòng thanh toán lại để nhận tiền đấu giá.',
-                        "payment_room"
+
                     );
                 }
                 foreach ($admin as $ad) {

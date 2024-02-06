@@ -45,10 +45,10 @@ class AuctionHuiRoomController extends Controller
             foreach ($room_user as $us) {
 
                 $user = User::find($us->user_id);
-                $this->sendNoticationApp(
+                $this->pushNoticationApp(
                     $user->device_id,
                     'Phòng ' . $room->title . ' đã bắt đầu đấu giá hụi vui lòng vào app để đấu giá. Thời gian kết thúc đấu giá vào lúc ' . $request->time_end,
-                    "room_all"
+
                 );
                 $notication->postNotification(
                     $user->id,

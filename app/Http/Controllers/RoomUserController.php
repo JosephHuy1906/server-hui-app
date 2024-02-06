@@ -145,10 +145,9 @@ class RoomUserController extends Controller
             );
             if ($user->device_id !== null) {
 
-                $this->sendNoticationApp(
+                $this->pushNoticationApp(
                     $user->device_id,
                     "Bạn đã bị khoá trong phòng " . $room->title . " và không thể chơi",
-                    "room_all"
                 );
             }
         }
