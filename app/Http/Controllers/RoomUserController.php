@@ -53,7 +53,13 @@ class RoomUserController extends Controller
                     if ($request->user_id === "4bdc395e-77d4-4602-8e0f-af6bb401560f") {
                         return $this->errorResponse('Bạn không thể xoá admin ra khỏi phòng', 400);
                     }
-                    $noti->postNotification($request->user_id, 'user', 'Bạn đã thoát khỏi khóm hụi ' . $room->title, $request->room_id);
+                    $noti->postNotification(
+                        $request->user_id,
+                        'user',
+                        'Bạn đã thoát khỏi khóm hụi ' . $room->title,
+                        $request->room_id,
+                        "room_all"
+                    );
                     return $this->successResponse('Remove User for room successfully', null, 201);
                 } else {
                     DB::table('room_user')->insert([
@@ -62,7 +68,13 @@ class RoomUserController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                    $noti->postNotification($request->user_id, 'user', 'Bạn đã tham gia vào phòng hụi ' . $room->title . ' thành công', $request->room_id);
+                    $noti->postNotification(
+                        $request->user_id,
+                        'user',
+                        'Bạn đã tham gia vào phòng hụi ' . $room->title . ' thành công',
+                        $request->room_id,
+                        "room_all"
+                    );
                     return $this->successResponse('Add User for room successfully', null, 201);
                 }
             }
@@ -128,7 +140,8 @@ class RoomUserController extends Controller
                 $room_user->user_id,
                 "User",
                 "Bạn đã bị khoá trong phòng hụi và không thể chơi",
-                $room_user->room_id
+                $room_user->room_id,
+                "room_all"
             );
             if ($user->device_id !== null) {
                 $this->sendNoticationApp(
@@ -158,7 +171,8 @@ class RoomUserController extends Controller
             $room_user->user_id,
             "User",
             "Bạn đã được admin mở khoá trong phòng " . $room->title . " và có thể bắt đầu chơi ngay bây giờ",
-            $room_user->room_id
+            $room_user->room_id,
+            "room_all"
         );
         if ($user->device_id !== null) {
             $this->sendNoticationApp(

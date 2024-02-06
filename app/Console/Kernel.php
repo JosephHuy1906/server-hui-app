@@ -35,13 +35,15 @@ class Kernel extends ConsoleKernel
                         $item->user_id,
                         'User',
                         "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong phòng " . $room->title,
-                        $room->id
+                        $room->id,
+                        "room_all"
                     );
                     $notication->postNotification(
                         $item->user_id,
                         'Admin',
                         "User " . $item->user_id . ". Đã quá thời gian và chưa thanh toán tiền hụi phòng " . $room->title,
-                        $room->id
+                        $room->id,
+                        "room_all"
                     );
                     if ($item->user->device_id !== null) {
                         $oneSinal->sendNoticationApp(
@@ -69,7 +71,13 @@ class Kernel extends ConsoleKernel
                     $room->update(['status' => 'Lock']);
                     $usersInRoom = $room->users;
                     foreach ($usersInRoom as $user) {
-                        $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . '  đã đủ người, đã bị khoá lại và đã bắt đầu chơi', $room->id);
+                        $notication->postNotification(
+                            $user->id,
+                            $user->role,
+                            'Phòng ' . $room->title . '  đã đủ người, đã bị khoá lại và đã bắt đầu chơi',
+                            $room->id,
+                            "room_all"
+                        );
                         if ($user->device_id !== null) {
                             $oneSinal->sendNoticationApp(
                                 $user->device_id,
@@ -115,7 +123,13 @@ class Kernel extends ConsoleKernel
                 foreach ($userList as $us) {
                     $user = User::find($us->user_id);
                     $totalAmountPayable = number_format($room->price_room, 0, ',', '.');
-                    $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ", $room->id);
+                    $notication->postNotification(
+                        $us->user_id,
+                        'User',
+                        "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ",
+                        $room->id,
+                        "payment_room"
+                    );
                     $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
                     if ($user->device_id !== null) {
                         $oneSinal->sendNoticationApp(
@@ -141,7 +155,13 @@ class Kernel extends ConsoleKernel
                 foreach ($userList as $us) {
                     $user = User::find($us->user_id);
                     $totalAmountPayable = number_format($room->price_room, 0, ',', '.');
-                    $notication->postNotification($us->user_id, 'User', "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ", $room->id);
+                    $notication->postNotification(
+                        $us->user_id,
+                        'User',
+                        "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ",
+                        $room->id,
+                        "payment_room"
+                    );
                     $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
                     if ($user->device_id !== null) {
                         $oneSinal->sendNoticationApp(

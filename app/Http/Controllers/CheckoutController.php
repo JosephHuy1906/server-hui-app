@@ -58,8 +58,20 @@ class CheckoutController extends Controller
                     'status' => 'approved'
                 ]);
                 $totalAmountPayable = number_format($find->total_amount_payable, 0, ',', '.');
-                $notication->postNotification($find->user_id, 'user', 'Bạn đã thanh toán ' . $totalAmountPayable . 'đ', $find->room_id);
-                $notication->postNotification($find->user_id, 'admin', 'User ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ', $find->room_id);
+                $notication->postNotification(
+                    $find->user_id,
+                    'user',
+                    'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
+                    $find->room_id,
+                    "payment_room"
+                );
+                $notication->postNotification(
+                    $find->user_id,
+                    'admin',
+                    'User ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ',
+                    $find->room_id,
+                    "payment_room"
+                );
             }
             if (!$find) {
                 $totalAmountPayable = number_format($checkout->price, 0, ',', '.');
@@ -67,13 +79,15 @@ class CheckoutController extends Controller
                     $checkout->user_id,
                     'user',
                     'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
-                    null
+                    null,
+                    "payment_room"
                 );
                 $notication->postNotification(
                     $checkout->user_id,
                     'admin',
                     'User ' . $checkout->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ',
-                    null
+                    null,
+                    "payment_room"
                 );
             }
         } catch (\Throwable $e) {
@@ -102,13 +116,15 @@ class CheckoutController extends Controller
                     $checkout->user_id,
                     'User',
                     'Bạn đã huỷ hoá đơn ' . $totalAmountPayable . 'đ ',
-                    $find->room_id
+                    $find->room_id,
+                    "payment_room"
                 );
                 $notication->postNotification(
                     $checkout->user_id,
                     'Admin',
                     'User ' . $checkout->user_id . ' đã huỷ hoá đơn' . $totalAmountPayable . 'đ ',
-                    $find->room_id
+                    $find->room_id,
+                    "payment_room"
                 );
             }
             if (!$find) {
@@ -117,13 +133,15 @@ class CheckoutController extends Controller
                     $checkout->user_id,
                     'User',
                     'Bạn đã huỷ hoá đơn ' . $totalAmountPayable . 'đ ',
-                    null
+                    null,
+                    "payment_room"
                 );
                 $notication->postNotification(
                     $checkout->user_id,
                     'Admin',
                     'User ' . $checkout->user_id . ' đã huỷ hoá đơn' . $totalAmountPayable . 'đ ',
-                    null
+                    null,
+                    "payment_room"
                 );
             }
             return view('cancel');
@@ -188,7 +206,8 @@ class CheckoutController extends Controller
                 $request->user_id,
                 'User',
                 'Hoá đơn với số tiền: ' . $totalAmountPayable . 'đ đang chờ bạn thanh toán',
-                $request->room_id
+                $request->room_id,
+                "payment_room"
             );
             return $this->successResponse(
                 'Create Payment link success',
@@ -307,7 +326,8 @@ class CheckoutController extends Controller
                     $user->user_id,
                     'User',
                     'Bạn đã đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date . ' Thành công',
-                    $payment->room_id
+                    $payment->room_id,
+                    "payment_room"
                 );
                 if ($data->device_id !== null) {
                     $this->sendNoticationApp(
@@ -348,7 +368,8 @@ class CheckoutController extends Controller
                     $user->user_id,
                     'User',
                     'Bạn vẫn chưa đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date,
-                    $payment->room_id
+                    $payment->room_id,
+                    "payment_room"
                 );
                 if ($data->device_id !== null) {
                     $this->sendNoticationApp(
@@ -397,13 +418,15 @@ class CheckoutController extends Controller
                     $find->user_id,
                     'user',
                     'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
-                    $find->room_id
+                    $find->room_id,
+                    "payment_room"
                 );
                 $notication->postNotification(
                     $find->user_id,
                     'admin',
                     'User có id là: ' . $find->user_id . ' đã thanh toán tiền' . $totalAmountPayable . 'đ',
-                    $find->room_id
+                    $find->room_id,
+                    "payment_room"
                 );
                 if ($data->device_id !== null) {
                     $this->sendNoticationApp(
@@ -458,13 +481,15 @@ class CheckoutController extends Controller
                     $checkout->user_id,
                     'User',
                     'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ vui lòng thanh toán lại để nhận tiền đấu giá.',
-                    $find->room_id
+                    $find->room_id,
+                    "payment_room"
                 );
                 $notication->postNotification(
                     $checkout->user_id,
                     'Admin',
                     'User ' . $checkout->user_id . ' đã huỷ hoá đơn' . $totalAmountPayable . 'đ ',
-                    $find->room_id
+                    $find->room_id,
+                    "payment_room"
                 );
                 if ($data->device_id !== null) {
                     $this->sendNoticationApp(
@@ -543,7 +568,8 @@ class CheckoutController extends Controller
                 $request->user_id,
                 'User',
                 'Hoá đơn với số tiền: ' . $totalAmountPayable . 'đ đã bị huỷ',
-                $request->room_id
+                $request->room_id,
+                "payment_room"
             );
 
             return $this->successResponse("Cannel Payment link info success", $response["data"], 200);

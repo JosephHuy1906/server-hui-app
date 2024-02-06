@@ -49,7 +49,13 @@ class RoomController extends Controller
             });
 
             if (!$check_day) {
-                $noti->postNotification($item, 'user', 'Nhóm còn một ngày nữa sẽ giải tán', $userId);
+                $noti->postNotification(
+                    $item,
+                    'user',
+                    'Nhóm còn một ngày nữa sẽ giải tán',
+                    $userId,
+                    "room_all"
+                );
             }
 
             return $this->successResponse('Get room by User success', RoomResource::collection($userRooms), 200);
@@ -189,7 +195,13 @@ class RoomController extends Controller
                     $room->update(['status' => 'Lock']);
                     $usersInRoom = $room->users;
                     foreach ($usersInRoom as $user) {
-                        $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi', $room->id);
+                        $notication->postNotification(
+                            $user->id,
+                            $user->role,
+                            'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi',
+                            $room->id,
+                            "room_all"
+                        );
                     }
                 }
             }

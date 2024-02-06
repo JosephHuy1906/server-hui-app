@@ -24,7 +24,8 @@ class UserWinHuiController extends Controller
                 $find->user_id,
                 "User",
                 'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
-                $find->room_id
+                $find->room_id,
+                "payment_auction"
             );
             if ($user->device_id !== null) {
                 $this->sendNoticationApp(
@@ -59,7 +60,8 @@ class UserWinHuiController extends Controller
                     $find->user_id,
                     "User",
                     'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
-                    $find->room_id
+                    $find->room_id,
+                    "payment_auction"
                 );
                 if ($user->device_id !== null) {
                     $this->sendNoticationApp(

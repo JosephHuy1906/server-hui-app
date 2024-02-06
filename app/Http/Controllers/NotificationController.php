@@ -53,7 +53,7 @@ class NotificationController extends Controller
             return $this->errorResponse('Error Server',  500);
         }
     }
-    public function postNotification($user_id, $status, $description, $room_id)
+    public function postNotification($user_id, $status, $description, $room_id, $location)
     {
         try {
             $data = [
@@ -61,6 +61,7 @@ class NotificationController extends Controller
                 'status' => $status,
                 'description' => $description,
                 'room_id' => $room_id,
+                'location' => $location,
             ];
             $notifications = Notification::create($data);
 
@@ -77,6 +78,7 @@ class NotificationController extends Controller
                 'user_id' => 'required',
                 'description' => 'required',
                 'room_id' => 'required',
+                'location' => 'required',
             ]);
 
             $notifications = Notification::create($request->all());

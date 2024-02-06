@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('user_id');
             $table->enum('status', ['user', 'admin']);
+            $table->enum('location', ['home', 'payment_auction', "room_all", "payment_auction"])->default("home");
             $table->foreignId('room_id')->references('id')->on('rooms');
             $table->text('description');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

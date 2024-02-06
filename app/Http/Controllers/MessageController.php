@@ -69,7 +69,13 @@ class MessageController extends Controller
                     $room->update(['status' => 'Lock']);
                     $usersInRoom = $room->users;
                     foreach ($usersInRoom as $user) {
-                        $notication->postNotification($user->id, $user->role, 'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi', $room->id);
+                        $notication->postNotification(
+                            $user->id,
+                            $user->role,
+                            'Phòng ' . $room->title . ' đã đủ người và đã bắt đầu chơi',
+                            $room->id,
+                            "room_all"
+                        );
                     }
                 }
             }

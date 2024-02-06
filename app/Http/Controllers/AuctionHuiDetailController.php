@@ -40,7 +40,13 @@ class AuctionHuiDetailController extends Controller
             $auction->update([
                 "auction_price" => $request->total_price
             ]);
-            $noti->postNotification($request->user_id, 'user', 'Bạn đã đấu giá hụi thành công', $request->room_id);
+            $noti->postNotification(
+                $request->user_id,
+                'user',
+                'Bạn đã đấu giá hụi thành công',
+                $request->room_id,
+                "payment_auction"
+            );
             return $this->successResponse('Bạn đã đấu giá hụi thành công', new AuctionHuiDetailResource($create), 201);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(),  500);
@@ -137,7 +143,8 @@ class AuctionHuiDetailController extends Controller
                 $winningBidder->user->user_id,
                 'User',
                 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
-                $request->room_id
+                $request->room_id,
+                "payment_auction"
             );
             $this->sendNoticationApp(
                 $user->device_id,
@@ -168,7 +175,8 @@ class AuctionHuiDetailController extends Controller
                     $winningBidder->user->user_id,
                     'User',
                     'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
-                    $room_id
+                    $room_id,
+                    "room_all"
                 );
                 $this->sendNoticationApp(
                     $user->device_id,
@@ -187,7 +195,8 @@ class AuctionHuiDetailController extends Controller
                     $winningBidder->user->user_id,
                     'User',
                     'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
-                    $room_id
+                    $room_id,
+                    "room_all"
                 );
                 $this->sendNoticationApp(
                     $user->device_id,
@@ -212,7 +221,8 @@ class AuctionHuiDetailController extends Controller
                 $winningBidder->user->user_id,
                 'User',
                 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
-                $room_id
+                $room_id,
+                "payment_auction"
             );
             $this->sendNoticationApp(
                 $user->device_id,

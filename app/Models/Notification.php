@@ -23,5 +23,6 @@ class Notification extends Model
         'status',
         'description',
         'room_id',
+        'location',
     ];
 }
