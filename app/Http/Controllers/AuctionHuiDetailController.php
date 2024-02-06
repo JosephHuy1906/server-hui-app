@@ -146,9 +146,13 @@ class AuctionHuiDetailController extends Controller
                 $request->room_id,
                 "payment_auction"
             );
+            $fields = array(
+                "message" =>   'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
+                "location" => "payment_auction"
+            );
             $this->sendNoticationApp(
                 $user->device_id,
-                'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
+                $fields,
             );
             return $this->successResponse('Create user win hui successfully', new UserWinHuiResource($addUser), 201);
         } catch (\Throwable $err) {
@@ -178,9 +182,13 @@ class AuctionHuiDetailController extends Controller
                     $room_id,
                     "room_all"
                 );
+                $fields = array(
+                    "message" =>  'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                    "location" => "room_all"
+                );
                 $this->sendNoticationApp(
                     $user->device_id,
-                    'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                    $fields,
                 );
                 return;
             }
@@ -198,9 +206,13 @@ class AuctionHuiDetailController extends Controller
                     $room_id,
                     "room_all"
                 );
+                $fields = array(
+                    "message" =>  'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                    "location" => "room_all"
+                );
                 $this->sendNoticationApp(
                     $user->device_id,
-                    'Phòng đấu giá hụi ' . $room->title . ' đã kết thúc. Vì không có ai đấu giá nên tiền tích luỹ sẽ giữ nguyên',
+                    $fields,
                 );
                 return;
             }
@@ -224,9 +236,13 @@ class AuctionHuiDetailController extends Controller
                 $room_id,
                 "payment_auction"
             );
+            $fields = array(
+                "message" => 'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
+                "location" => "payment_auction"
+            );
             $this->sendNoticationApp(
                 $user->device_id,
-                'Bạn đã đấu hụi thành công với số tiền: ' . $totalAmountPayable . 'đ.Vui lòng thanh toán để nhận số tiền trên',
+                $fields,
             );
             $auction->removeAuctionHui($auction_hui_id);
             return;

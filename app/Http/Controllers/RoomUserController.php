@@ -144,9 +144,13 @@ class RoomUserController extends Controller
                 "room_all"
             );
             if ($user->device_id !== null) {
+                $fields = array(
+                    "message" => "Bạn đã bị khoá trong phòng " . $room->title . " và không thể chơi",
+                    "location" => "room_all"
+                );
                 $this->sendNoticationApp(
                     $user->device_id,
-                    "Bạn đã bị khoá trong phòng " . $room->title . " và không thể chơi"
+                    $fields
                 );
             }
         }
@@ -175,9 +179,13 @@ class RoomUserController extends Controller
             "room_all"
         );
         if ($user->device_id !== null) {
+            $fields = array(
+                "message" =>  "Bạn đã được admin mở khoá trong phòng " . $room->title . " và có thể bắt đầu chơi ngay bây giờ",
+                "location" => "room_all"
+            );
             $this->sendNoticationApp(
                 $user->device_id,
-                "Bạn đã được admin mở khoá trong phòng " . $room->title . " và có thể bắt đầu chơi ngay bây giờ"
+                $fields
             );
         }
         return $this->successResponse("Khoá người dùng thành công", null, 201);

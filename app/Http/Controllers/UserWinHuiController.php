@@ -28,9 +28,13 @@ class UserWinHuiController extends Controller
                 "payment_auction"
             );
             if ($user->device_id !== null) {
+                $fields = array(
+                    "message" => 'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
+                    "location" => "payment_auction"
+                );
                 $this->sendNoticationApp(
                     $user->device_id,
-                    'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.'
+                    $fields
                 );
             }
         } catch (\Throwable $th) {
@@ -64,9 +68,13 @@ class UserWinHuiController extends Controller
                     "payment_auction"
                 );
                 if ($user->device_id !== null) {
+                    $fields = array(
+                        "message" => 'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.',
+                        "location" => "payment_auction"
+                    );
                     $this->sendNoticationApp(
                         $user->device_id,
-                        'Admin đã thanh toán tiền hụi cho bạn với số ' . $find->total_amount_payable . 'đ tiền.'
+                        $fields
                     );
                 }
             }
