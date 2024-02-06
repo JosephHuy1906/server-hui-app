@@ -7,12 +7,12 @@ use Ladumor\OneSignal\OneSignal;
 
 class OneSinalController extends Controller
 {
-    public function sendNoticationApp($devieID, $message)
-    {
-        $fields['include_player_ids'] = [$devieID];
+    // public function sendNoticationApp($devieID, $message)
+    // {
+    //     $fields['include_player_ids'] = [$devieID];
 
-        OneSignal::sendPush($fields, $message);
-    }
+    //     OneSignal::sendPush($fields, $message);
+    // }
 
     public function getAllNotificationApp()
     {

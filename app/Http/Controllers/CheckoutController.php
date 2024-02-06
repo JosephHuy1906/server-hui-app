@@ -330,13 +330,11 @@ class CheckoutController extends Controller
                     "payment_room"
                 );
                 if ($data->device_id !== null) {
-                    $fields = array(
-                        "message" => 'Bạn đã đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date . ' Thành công',
-                        "location" => "payment_room"
-                    );
+
                     $this->sendNoticationApp(
                         $data->device_id,
-                        $fields
+                        'Bạn đã đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date . ' Thành công',
+                        "payment_room"
                     );
                 }
                 Mail::send('emails.paymentAuction', compact('checkout', 'data'), function ($email) use ($data) {
@@ -376,13 +374,11 @@ class CheckoutController extends Controller
                     "payment_room"
                 );
                 if ($data->device_id !== null) {
-                    $fields = array(
-                        "message" => 'Bạn vẫn chưa đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date,
-                        "location" => "payment_room"
-                    );
+
                     $this->sendNoticationApp(
                         $data->device_id,
-                        $fields,
+                        'Bạn vẫn chưa đóng   ' . $payment->price_pay . 'đ tiền hụi ngày ' . $date,
+                        "payment_room"
                     );
                 }
 
@@ -437,13 +433,11 @@ class CheckoutController extends Controller
                     "payment_room"
                 );
                 if ($data->device_id !== null) {
-                    $fields = array(
-                        "message" => 'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
-                        "location" => "payment_room"
-                    );
+
                     $this->sendNoticationApp(
                         $data->device_id,
-                        $fields
+                        'Bạn đã thanh toán ' . $totalAmountPayable . 'đ',
+                        "payment_room"
                     );
                 }
                 foreach ($admin as $ad) {
@@ -504,13 +498,11 @@ class CheckoutController extends Controller
                     "payment_room"
                 );
                 if ($data->device_id !== null) {
-                    $fields = array(
-                        "message" => 'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ vui lòng thanh toán lại để nhận tiền đấu giá.',
-                        "location" => "payment_room"
-                    );
+
                     $this->sendNoticationApp(
                         $data->device_id,
-                        $fields,
+                        'Bạn đã huỷ hoá đơn thanh toán đấu hụi với số tiền ' . $totalAmountPayable . 'đ vui lòng thanh toán lại để nhận tiền đấu giá.',
+                        "payment_room"
                     );
                 }
                 foreach ($admin as $ad) {

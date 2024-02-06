@@ -43,14 +43,12 @@ class AuctionHuiRoomController extends Controller
 
             $auction = AuctionHuiRoom::create($request->all());
             foreach ($room_user as $us) {
-                $fields = array(
-                    "message" => 'Phòng ' . $room->title . ' đã bắt đầu đấu giá hụi vui lòng vào app để đấu giá. Thời gian kết thúc đấu giá vào lúc ' . $request->time_end,
-                    "location" => "room_all"
-                );
+
                 $user = User::find($us->user_id);
                 $this->sendNoticationApp(
                     $user->device_id,
-                    $fields
+                    'Phòng ' . $room->title . ' đã bắt đầu đấu giá hụi vui lòng vào app để đấu giá. Thời gian kết thúc đấu giá vào lúc ' . $request->time_end,
+                    "room_all"
                 );
                 $notication->postNotification(
                     $user->id,

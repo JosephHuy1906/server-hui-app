@@ -23,10 +23,19 @@ trait HttpResponses
             'message' => $message,
         ], $status);
     }
-    protected function sendNoticationApp($devieID, $message)
+    // protected function sendNoticationApp($devieID, $message)
+    // {
+    //     $fields['include_player_ids'] = [$devieID];
+
+    //     OneSignal::sendPush($fields, $message);
+    // }
+    public function sendNoticationApp($devieID, $message, $location)
     {
         $fields['include_player_ids'] = [$devieID];
-
-        OneSignal::sendPush($fields, $message);
+        $fields['contents'] = array(
+            "message" => $message,
+            "location" => $location,
+        );
+        OneSignal::sendPush($fields);
     }
 }

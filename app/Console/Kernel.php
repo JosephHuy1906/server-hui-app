@@ -46,13 +46,10 @@ class Kernel extends ConsoleKernel
                         "room_all"
                     );
                     if ($item->user->device_id !== null) {
-                        $fields = array(
-                            "message" => "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong  phòng " . $room->title,
-                            "location" => "room_all"
-                        );
                         $oneSinal->sendNoticationApp(
                             $item->user->device_id,
-                            $fields
+                            "Đã quá thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán nếu không sẽ bị khoá tài khoản trong  phòng " . $room->title,
+                            "room_all"
                         );
                     }
                 }
@@ -83,13 +80,10 @@ class Kernel extends ConsoleKernel
                             "room_all"
                         );
                         if ($user->device_id !== null) {
-                            $fields = array(
-                                "message" =>  'Phòng ' . $room->title . ' đã đủ người, đã bị khoá lại và đã bắt đầu chơi',
-                                "location" => "room_all"
-                            );
                             $oneSinal->sendNoticationApp(
                                 $user->device_id,
-                                $fields
+                                'Phòng ' . $room->title . ' đã đủ người, đã bị khoá lại và đã bắt đầu chơi',
+                                "room_all"
                             );
                         }
                     }
@@ -140,13 +134,10 @@ class Kernel extends ConsoleKernel
                     );
                     $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
                     if ($user->device_id !== null) {
-                        $fields = array(
-                            "message" => "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ",
-                            "location" => "payment_room"
-                        );
                         $oneSinal->sendNoticationApp(
                             $user->device_id,
-                            $fields
+                            "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ",
+                            "payment_room"
                         );
                     }
                 }
@@ -176,13 +167,10 @@ class Kernel extends ConsoleKernel
                     );
                     $checkout->postCheckout($room->price_room, 'Đóng tiền hụi phòng ' . $room->title, $us->id, $room->id, $us->user_id);
                     if ($user->device_id !== null) {
-                        $fields = array(
-                            "message" =>  "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ",
-                            "location" => "payment_room"
-                        );
                         $oneSinal->sendNoticationApp(
                             $user->device_id,
-                            $fields
+                            "Đã đến thời gian đóng tiền hụi phòng " . $room->title . ". Vui lòng thanh toán " . $totalAmountPayable . "đ",
+                            "payment_room"
                         );
                     }
                 }
