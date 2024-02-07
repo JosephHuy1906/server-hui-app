@@ -22,7 +22,7 @@ class RoomController extends Controller
                 ->get();
             return $this->successResponse('Get room all success',  RoomResource::collection($rooms), 200);
         } catch (\Throwable $th) {
-            return $this->errorResponse("Server Error",  500);
+            return $this->errorResponse($th->getMessage(),  500);
         }
     }
     public function getRoomsByUserId($userId, $item)
